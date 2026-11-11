@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wunschkurs-Wand</title>
+<link rel="stylesheet" href="css/karte.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100vh; background: #07061a; color: #f4f2ff; font-family: Barlow, system-ui, sans-serif; }
+  body { background:
+    radial-gradient(ellipse at 20% 0%, rgba(124,92,255,.25), transparent 50%),
+    radial-gradient(ellipse at 90% 100%, rgba(255,61,127,.18), transparent 50%), #07061a; background-attachment: fixed; }
+  .kopfzeile { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding: 28px 40px 18px; }
+  h1 { margin: 0; font-family: "Barlow Condensed", sans-serif; font-weight: 900; text-transform: uppercase; font-size: clamp(36px, 4.4vw, 72px); line-height: .9; }
+  h1 span { color: #ff3d7f; text-shadow: 0 0 30px rgba(255,61,127,.55); }
+  .zahl { text-align: right; }
+  .zahl b { display: block; font-family: "Barlow Condensed", sans-serif; font-size: clamp(48px, 5vw, 88px); line-height: .85; font-weight: 900; }
+  .zahl small { font-size: 15px; letter-spacing: .14em; text-transform: uppercase; color: #a9a4c9; font-weight: 700; }
+  .wand { display: grid; grid-template-columns: repeat(auto-fill, minmax(var(--breite, 270px), 1fr)); gap: 26px; padding: 10px 40px 60px; }
+  .platz { cursor: zoom-in; transition: transform .25s; }
+  .platz:hover { transform: translateY(-4px) rotate(-.6deg); }
+  .platz.neu { animation: landen 1.1s cubic-bezier(.2,1.3,.4,1) both; }
+  @keyframes landen { from { transform: translateY(-60vh) rotate(-18deg) scale(1.6); opacity: 0; } 60% { opacity: 1; } }
+  .leer { grid-column: 1 / -1; text-align: center; padding: 12vh 20px; color: #a9a4c9; font-size: 22px; }
+  .leer .qr-hinweis { margin-top: 10px; font-size: 16px; }
+  .steuer { position: fixed; right: 16px; bottom: 14px; display: flex; gap: 8px; opacity: .25; transition: opacity .2s; }
+  .steuer:hover { opacity: 1; }
+  .steuer button, .steuer select { background: #1e1a3f; color: #fff; border: 1px solid rgba(255,255,255,.15); border-radius: 99px; padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer; }
+  .gross { position: fixed; inset: 0; z-index: 50; display: none; place-items: center; background: rgba(4,3,14,.88); backdrop-filter: blur(12px); padding: 3vh; }
+  .gross.an { display: grid; }
+  .gross .platz-gross { width: min(88vw, calc(94vh * .8)); animation: zoom .4s cubic-bezier(.2,1.2,.4,1); }
+  @keyframes zoom { from { transform: scale(.6); opacity: 0; } }
+  .gross iframe { width: min(90vw, 160vh); aspect-ratio: 16/9; border: 0; border-radius: 16px; }
+  .status { position: fixed; left: 16px; bottom: 14px; font-size: 12px; color: #6f6a93; }
+</style>
+</head>
+<body>
+<header class="kopfzeile">
+  <h1>Unsere <span>Wunschkurse</span><br><small id="klasseTitel" style="font-size:.45em;color:#a9a4c9"></small></h1>
+  <div class="zahl"><b id="anzahl">0</b><small>Kurse</small></div>
+</header>
+<main class="wand" id="wand"></main>
+<div class="gross" id="gross"></div>
+<div class="steuer">
+  <button id="kleiner">−</button><button id="groesser">+</button>
+  <button id="vollbild">Vollbild</button>
+</div>
+<div class="status" id="status"></div>
+
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/karte.js"></script>
+<script>
+(function () {
+  const K = window.WK_KARTE, API = window.WK_API;
+  const params = new URLSearchParams(location.search);
+  const klasse = (params.get("k") || "").trim().toUpperCase();
+  document.getElementById("klasseTitel").textContent = klasse ? "Klasse " + klasse : "";
+  const wand = document.getElementById("wand"), gross = document.getElementById("gross");
+  const gezeigt = new Map();
+  let breite = 270, erstesMal = true;
+
+  function karteAus(row) { return Object.assign({}, row.karte || {}, { titel: row.titel, satz: row.satz, klasse: row.klasse }); }
+
+  async function laden() {
+    try {
+      const rows = await API.freigegebene(klasse);
+      const ids = new Set(rows.map(r => r.id));
+      for (const [id, el] of gezeigt) if (!ids.has(id)) { el.remove(); gezeigt.delete(id); }
+      rows.forEach((r, i) => {
+        if (gezeigt.has(r.id)) return;
+        const platz = document.createElement("div"); platz.className = "platz" + (erstesMal ? "" : " neu");
+        if (!erstesMal) platz.style.animationDelay = (i % 6) * 0.15 + "s";
+        platz.appendChild(K.render(karteAus(r)));
+        platz.addEventListener("click", ev => {
+          const v = ev.target.closest(".wk-video");
+          if (v) { gross.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${v.dataset.video}?autoplay=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`; gross.classList.add("an"); return; }
+          gross.innerHTML = ""; const g = document.createElement("div"); g.className = "platz-gross"; g.appendChild(K.render(karteAus(r))); gross.appendChild(g); gross.classList.add("an");
+        });
+        wand.appendChild(platz); gezeigt.set(r.id, platz);
+      });
+      document.getElementById("anzahl").textContent = gezeigt.size;
+      const leer = wand.querySelector(".leer");
+      if (!gezeigt.size && !leer) wand.innerHTML = `<div class="leer">Noch ist die Wand leer.<div class="qr-hinweis">Die ersten Wunschkurse landen gleich hier.</div></div>`;
+      if (gezeigt.size && leer) leer.remove();
+      document.getElementById("status").textContent = "Aktualisiert " + new Date().toLocaleTimeString("de-AT");
+      erstesMal = false;
+    } catch (e) {
+      document.getElementById("status").textContent = "Verbindung unterbrochen – neuer Versuch …";
+    }
+  }
+  gross.addEventListener("click", () => { gross.classList.remove("an"); gross.innerHTML = ""; });
+  document.addEventListener("keydown", e => { if (e.key === "Escape") gross.click(); });
+  function setBreite() { wand.style.setProperty("--breite", breite + "px"); }
+  document.getElementById("kleiner").onclick = () => { breite = Math.max(180, breite - 40); setBreite(); };
+  document.getElementById("groesser").onclick = () => { breite = Math.min(520, breite + 40); setBreite(); };
+  document.getElementById("vollbild").onclick = () => { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); };
+  laden(); setInterval(laden, 4000);
+})();
+</script>
+</body>
+</html>
