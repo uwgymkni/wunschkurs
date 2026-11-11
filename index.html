@@ -51,7 +51,15 @@
   .reiter { display: flex; gap: 4px; padding: 10px 10px 0; overflow-x: auto; scrollbar-width: none; }
   .reiter::-webkit-scrollbar { display: none; }
   .reiter button { flex: 1 0 auto; border: 0; background: transparent; padding: 10px 10px 12px; border-radius: 12px 12px 0 0; font-weight: 700; font-size: 14px; color: var(--text2); cursor: pointer; display: grid; justify-items: center; gap: 3px; }
-  .reiter button i { font-style: normal; font-size: 20px; }
+  .reiter button i { font-style: normal; display: grid; place-items: center; }
+  .reiter button .ic { width: 22px; height: 22px; }
+  .ic { width: 1.1em; height: 1.1em; vertical-align: -0.18em; }
+  .stk-werkzeug button { display: grid; place-items: center; }
+  .stk-werkzeug button .ic { width: 20px; height: 20px; }
+  .hebel .ic { width: 20px; height: 20px; }
+  .gross-ic .ic { width: 40px; height: 40px; color: #fff; }
+  .erfolg-ic .ic { width: 84px; height: 84px; color: #ffd23f; stroke-width: 1.6; }
+  .baustein .ic { width: 18px; height: 18px; color: #c9c3ff; }
   .reiter button.an { color: var(--text); background: var(--panel2); }
   .seiten { background: var(--panel2); overflow-y: auto; padding: 18px; -webkit-overflow-scrolling: touch; }
   .seite { display: none; }
@@ -100,7 +108,8 @@
   .baustein { display: inline-flex; align-items: center; gap: 6px; margin: 0 6px 8px 0; padding: 9px 14px 9px 11px; border-radius: 99px; background: var(--bg); border: 1.5px solid var(--linie); font-weight: 600; font-size: 15px; }
   .baustein.drauf { opacity: .35; }
   .sticker-raster { display: grid; grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); gap: 6px; }
-  .sticker-raster .ziehbar { font-size: 32px; height: 56px; display: grid; place-items: center; background: var(--bg); border-radius: 12px; }
+  .sticker-raster .ziehbar { font-size: 32px; height: 60px; display: grid; place-items: center; background: var(--bg); border-radius: 12px; }
+  .sticker-raster .sticker-text { grid-column: span 2; font-size: 36px; overflow: hidden; }
   .geist { position: fixed; z-index: 1000; pointer-events: none; transform: translate(-50%, -50%) scale(1.15); filter: drop-shadow(0 10px 20px rgba(0,0,0,.5)); }
   .eigen-zeile { display: flex; gap: 8px; margin-top: 4px; }
   .eigen-zeile .feld { font-size: 15px; padding: 10px 12px; }
@@ -156,22 +165,22 @@
     <section class="buehne" id="buehne">
       <div class="karten-halter" id="halter"></div>
       <div class="stk-werkzeug" id="stkWerkzeug">
-        <button data-a="klein" aria-label="Kleiner">−</button>
-        <button data-a="gross" aria-label="Größer">+</button>
-        <button data-a="drehen" aria-label="Drehen">⟳</button>
-        <button data-a="weg" aria-label="Löschen">🗑</button>
+        <button data-a="klein" aria-label="Kleiner" data-ic="minus"></button>
+        <button data-a="gross" aria-label="Größer" data-ic="plus"></button>
+        <button data-a="drehen" aria-label="Drehen" data-ic="rotate-cw"></button>
+        <button data-a="weg" aria-label="Löschen" data-ic="trash-2"></button>
       </div>
       <div class="tipp-buehne">Bausteine und Sticker auf die Karte ziehen · Tippen entfernt Bausteine</div>
     </section>
 
     <aside class="panel">
       <nav class="reiter" id="reiter">
-        <button data-s="idee" class="an"><i>💡</i>Idee</button>
-        <button data-s="look"><i>🎨</i>Look</button>
-        <button data-s="bausteine"><i>🧱</i>Bausteine</button>
-        <button data-s="sticker"><i>✨</i>Sticker</button>
-        <button data-s="medien"><i>📷</i>Bild</button>
-        <button data-s="satz"><i>💬</i>Satz</button>
+        <button data-s="idee" class="an"><i data-ic="lightbulb"></i>Idee</button>
+        <button data-s="look"><i data-ic="palette"></i>Look</button>
+        <button data-s="bausteine"><i data-ic="blocks"></i>Bausteine</button>
+        <button data-s="sticker"><i data-ic="sticker"></i>Sticker</button>
+        <button data-s="medien"><i data-ic="image"></i>Bild</button>
+        <button data-s="satz"><i data-ic="message-square-quote"></i>Satz</button>
       </nav>
       <div class="seiten">
         <section class="seite an" data-s="idee">
@@ -189,7 +198,7 @@
               <div><div class="walze" id="w2"><ul></ul></div><div class="walze-label">Wo</div></div>
             </div>
             <div class="automat-knoepfe">
-              <button class="btn hebel" id="drehen">🎰 Drehen</button>
+              <button class="btn hebel" id="drehen"><span data-ic="dices"></span> Drehen</button>
               <button class="btn" id="uebernehmen">Übernehmen</button>
             </div>
           </div>
@@ -215,7 +224,7 @@
           <div id="bausteinListe"></div>
           <div class="gruppe-titel">Eigener Baustein</div>
           <div class="eigen-zeile">
-            <input class="feld" id="eigenB" maxlength="28" placeholder="z. B. Mit Hund 🐕" autocomplete="off">
+            <input class="feld" id="eigenB" maxlength="28" placeholder="z. B. Mit Hund" autocomplete="off">
             <button class="btn" id="eigenBtn">Dazu</button>
           </div>
         </section>
@@ -230,7 +239,7 @@
           <h3>Bild &amp; Video</h3>
           <p class="hilfe">Ein eigenes Bild als Hintergrund, und wenn du willst, ein YouTube-Video, das zu deinem Kurs passt.</p>
           <label class="upload" id="uploadLabel">
-            <span style="font-size:34px">🖼️</span>
+            <span data-ic="image" class="gross-ic"></span>
             <b>Bild auswählen</b>
             <span>Foto, Screenshot oder Zeichnung</span>
             <input type="file" accept="image/*" id="bildInput" hidden>
@@ -250,7 +259,7 @@
         </section>
       </div>
       <div class="fuss">
-        <button class="btn haupt" id="fertigBtn">Fertig ✓</button>
+        <button class="btn haupt" id="fertigBtn">Fertig</button>
       </div>
     </aside>
   </main>
@@ -273,6 +282,7 @@
 
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/karte.js"></script>
 <script>
 (function () {
@@ -329,8 +339,8 @@
   unter.addEventListener("input", () => { d.untertitel = unter.value; aenderung(); });
 
   const WALZEN = [
-    ["Drohnen", "Games", "Japan", "Mode", "das Gehirn", "das Weltall", "Fußball", "Krimis", "Musikvideos", "eigenes Geld", "das Klima", "Tiere", "Roboter", "Street Art", "Erste Hilfe", "Social Media", "Mythen", "Autos", "Pflanzen", "Escape Rooms", "Burger", "Tanz", "Fake News", "Vulkane", "Sneaker", "Schach", "Comics", "Gesundheit"],
-    ["bauen", "programmieren", "kochen", "filmen", "erforschen", "gestalten", "trainieren", "verstehen", "erfinden", "retten", "designen", "testen", "organisieren", "schreiben", "verkaufen", "zeichnen", "aufnehmen", "auseinandernehmen", "erklären", "fotografieren"],
+    ["Drohnen", "Games", "Japan", "Mode", "das Gehirn", "das Weltall", "Fußball", "Krimis", "Musikvideos", "eigenes Geld", "das Klima", "Tiere", "Roboter", "Street Art", "Erste Hilfe", "Social Media", "Mythen", "Autos", "Pflanzen", "Escape Rooms", "Streetfood", "Tanz", "Fake News", "Vulkane", "Sneaker", "Schach", "Comics", "Pferde", "Mountainbikes", "Formel 1", "Fotografie", "Kosmetik", "Hip-Hop", "Musicals", "Survival", "E-Sport", "Medizin", "Architektur", "Psychologie", "ein Start-up", "Kletterwände", "Raketen", "Schmuck", "Hunde"],
+    ["bauen", "programmieren", "kochen", "filmen", "erforschen", "gestalten", "trainieren", "verstehen", "erfinden", "retten", "designen", "testen", "organisieren", "schreiben", "verkaufen", "zeichnen", "aufnehmen", "auseinandernehmen", "erklären", "fotografieren", "präsentieren", "trainieren lassen", "verbessern"],
     ["im Wald", "im Labor", "auf der Bühne", "in der Stadt", "online", "in der Werkstatt", "am Wasser", "in Wien", "bei einer Firma", "in der Küche", "auf dem Berg", "im Studio", "in der Nacht", "auf Reisen", "im Garten", "an der Uni", "im Museum", "in Brüssel"],
   ];
   const ZEILE = 56; let wahl = [0, 0, 0], dreht = false;
@@ -445,8 +455,8 @@
       const zeile = document.createElement("div");
       g.items.forEach(([id, icon, label]) => {
         const b = document.createElement("span"); b.className = "baustein"; b.dataset.id = id;
-        b.innerHTML = `<span>${icon}</span>${label}`;
-        ziehbar(b, () => bausteinDazu(id), () => `<span class="baustein" style="background:#1e1a3f">${icon} ${label}</span>`);
+        b.innerHTML = `${WK_ICON(icon)}${label}`;
+        ziehbar(b, () => bausteinDazu(id), () => `<span class="baustein" style="background:#1e1a3f">${WK_ICON(icon)} ${label}</span>`);
         zeile.appendChild(b);
       });
       box.appendChild(zeile);
@@ -462,6 +472,7 @@
   }
   $("#eigenBtn").addEventListener("click", () => {
     const t = $("#eigenB").value.trim(); if (!t) return;
+    if (K.pruefen(t)) return kurzMeldung("Den Baustein bitte anders formulieren.");
     if (d.bausteine.length >= 8) return kurzMeldung("Höchstens 8 Bausteine.");
     d.bausteine.push({ eigen: t.slice(0, 28) }); $("#eigenB").value = ""; aenderung();
   });
@@ -470,14 +481,15 @@
   // ---------- Sticker ----------
   function stickerZeichnen() {
     const box = $("#stickerListe"); box.innerHTML = "";
-    K.STICKER.forEach(e => {
-      const b = document.createElement("div"); b.textContent = e;
+    K.STICKER.forEach(st => {
+      const b = document.createElement("div"); b.className = st.t === "t" ? "sticker-text" : "";
+      b.innerHTML = K.stickerHTML(st);
       ziehbar(b, pos => {
         if (d.sticker.length >= 10) return kurzMeldung("Höchstens 10 Sticker.");
         const p = pos || { x: .2 + Math.random() * .6, y: .25 + Math.random() * .4 };
-        d.sticker.push({ e, x: +p.x.toFixed(3), y: +p.y.toFixed(3), s: 1, r: Math.round(Math.random() * 30 - 15) });
+        d.sticker.push(Object.assign({}, st, { x: +p.x.toFixed(3), y: +p.y.toFixed(3), s: 1, r: Math.round(Math.random() * 30 - 15) }));
         stkAktiv = d.sticker.length - 1; aenderung();
-      }, () => `<span style="font-size:64px">${e}</span>`);
+      }, () => `<span style="font-size:64px;display:block">${K.stickerHTML(st)}</span>`);
       box.appendChild(b);
     });
   }
@@ -578,12 +590,15 @@
       document.querySelector('#reiter [data-s="idee"]').click(); titel.focus();
       return kurzMeldung("Dein Kurs braucht noch einen Titel.");
     }
+    if (K.kartePruefen(d)) {
+      return kurzMeldung("Da steht etwas, das so nicht auf die Wand passt. Formulier es bitte um.");
+    }
     stkAktiv = -1; zeichnen();
     box.innerHTML = `<div class="karten-flip"><div class="innen" id="flipInnen"></div></div>
       <h2>So sieht dein Kurs aus!</h2>
       <div class="knoepfe">
         <button class="btn" id="zurueck">Weiter bearbeiten</button>
-        <button class="btn haupt" id="senden">Auf die Wand schicken 🚀</button>
+        <button class="btn haupt" id="senden">Auf die Wand schicken</button>
       </div><div class="meldung" id="sendeMeldung"></div>`;
     $("#flipInnen").appendChild(K.render(Object.assign({}, d, { klasse })));
     fertig.classList.add("an");
@@ -599,7 +614,7 @@
       $("#flipInnen").classList.add("weg");
       konfetti();
       setTimeout(() => {
-        box.innerHTML = `<div style="font-size:72px">🎉</div><h2>Deine Karte ist unterwegs zur Wand!</h2>
+        box.innerHTML = `<div class="erfolg-ic">${WK_ICON("party-popper")}</div><h2>Deine Karte ist unterwegs zur Wand!</h2>
           <p style="color:var(--text2);margin:0;font-size:17px;line-height:1.45">Sobald sie freigegeben ist, erscheint sie am Beamer.</p>
           <div class="knoepfe"><button class="btn" id="nochmal">Noch einen Kurs bauen</button><button class="btn" id="schliessen">Zurück zur Karte</button></div>`;
         $("#schliessen").onclick = () => fertig.classList.remove("an");
@@ -625,6 +640,9 @@
       if (++t < 170) requestAnimationFrame(frame); else x.clearRect(0, 0, c.width, c.height);
     })();
   }
+
+  // ---------- Icons einsetzen ----------
+  document.querySelectorAll("[data-ic]").forEach(el => { el.insertAdjacentHTML("afterbegin", WK_ICON(el.dataset.ic)); });
 
   // ---------- Start ----------
   lookZeichnen(); bausteineZeichnen(); stickerZeichnen(); bildStatus(); zeichnen();

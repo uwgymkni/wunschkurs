@@ -40,7 +40,7 @@
 
 .wk-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1.6cqw; }
 .wk-chip { display: inline-flex; align-items: center; gap: 1.2cqw; font-size: 3.5cqw; font-weight: 600; padding: 1.3cqw 2.8cqw 1.3cqw 2.2cqw; border-radius: 99px; background: rgba(255,255,255,.14); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); border: .3cqw solid rgba(255,255,255,.22); white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
-.wk-chip span { font-size: 4cqw; }
+.wk-chip .ic { width: 4.2cqw; height: 4.2cqw; flex: none; stroke-width: 2.3; }
 .wk-chip.leer { opacity: .55; border-style: dashed; background: transparent; }
 
 .wk-video { all: unset; cursor: pointer; position: relative; display: block; width: 46cqw; aspect-ratio: 16/9; border-radius: 2.4cqw; background-size: cover; background-position: center; box-shadow: 0 1cqw 3cqw rgba(0,0,0,.4); border: .5cqw solid rgba(255,255,255,.8); }
@@ -50,7 +50,7 @@
 .wk-satz.leer { opacity: .5; font-weight: 500; }
 .wk-fuss { display: flex; justify-content: space-between; font-size: 2.6cqw; letter-spacing: .12em; text-transform: uppercase; color: var(--text2); font-weight: 600; }
 
-.stk { position: absolute; font-size: calc(13cqw * var(--s, 1)); transform: translate(-50%, -50%) rotate(var(--r, 0deg)); line-height: 1; filter: drop-shadow(0 1cqw 1.5cqw rgba(0,0,0,.35)); animation: wipp 3.2s ease-in-out infinite; animation-delay: calc(var(--r) * -0.03s); }
+.stk { position: absolute; font-size: calc(13cqw * var(--s, 1)); display: block; transform: translate(-50%, -50%) rotate(var(--r, 0deg)); line-height: 1; filter: drop-shadow(0 1cqw 1.5cqw rgba(0,0,0,.35)); animation: wipp 3.2s ease-in-out infinite; animation-delay: calc(var(--r) * -0.03s); }
 @keyframes wipp { 50% { transform: translate(-50%, -54%) rotate(calc(var(--r, 0deg) + 4deg)); } }
 @keyframes kenburns { from { transform: scale(1.05) translate(0,0); } to { transform: scale(1.18) translate(-3%, -2%); } }
 
@@ -140,3 +140,9 @@
 /* Standbild (z. B. Übersichten) */
 .wk-karte.still *, .wk-karte.still { animation-play-state: paused !important; }
 @media (prefers-reduced-motion: reduce) { .wk-karte *, .wk-karte { animation: none !important; } }
+
+/* Sticker im Aufkleber-Look */
+.stk-icon { display: grid; place-items: center; width: 1.25em; height: 1.25em; border-radius: 50%; background: var(--sc); color: #fff; border: .09em solid #fff; box-shadow: 0 .06em .14em rgba(0,0,0,.3); }
+.stk-icon .ic { width: .66em; height: .66em; stroke-width: 2.4; }
+.stk-text { display: inline-block; white-space: nowrap; font-family: "Barlow Condensed", sans-serif; font-weight: 900; text-transform: uppercase; font-size: .42em; letter-spacing: .02em; padding: .18em .5em .14em; background: var(--sc); color: #0b0b0b; border: .12em solid #fff; border-radius: .35em; box-shadow: 0 .1em .25em rgba(0,0,0,.3); line-height: 1; }
+.wk-video .ic { width: 8cqw; height: 8cqw; fill: #fff; }
