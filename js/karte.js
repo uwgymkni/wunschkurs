@@ -92,7 +92,7 @@
     return SPERR_WORT.some(w => woerter.includes(w));
   }
   function kartePruefen(d) {
-    const texte = [d.titel, d.untertitel, d.inhalt, d.satz].concat((d.bausteine || []).filter(b => b && b.eigen).map(b => b.eigen));
+    const texte = [d.titel, d.untertitel, d.inhalt, d.highlight, d.satz].concat(d.hashtags || []).concat((d.bausteine || []).filter(b => b && b.eigen).map(b => b.eigen));
     return texte.some(pruefen);
   }
 
@@ -136,7 +136,8 @@
     if (d.theme === "poster" && n > 14) tf *= .85;
     el.style.setProperty("--tf", tf.toFixed(3));
     const welt = WELTEN.find(w => w.id === d.welt);
-    const chips = (d.bausteine || []).map((b, i) => {
+    const tags = (d.hashtags || []).filter(Boolean);
+    const chips = tags.length ? tags.map(t => `<li class="wk-chip tag">#${esc(t)}</li>`).join("") : (d.bausteine || []).map((b, i) => {
       const info = typeof b === "string" ? B_INDEX[b] : (b && b.eigen ? { icon: "pencil", label: b.eigen } : null);
       if (!info) return "";
       return `<li class="wk-chip" data-i="${i}">${window.WK_ICON ? WK_ICON(info.icon) : ""}${esc(info.label)}</li>`;
@@ -153,7 +154,8 @@
         </header>
         <h2 class="wk-titel">${esc(d.titel || (opts.platzhalter ? "Dein Kurstitel" : ""))}</h2>
         ${d.untertitel ? `<p class="wk-unter">${esc(d.untertitel)}</p>` : ""}
-        <ul class="wk-chips">${chips || (opts.platzhalter ? '<li class="wk-chip leer">Bausteine hierher ziehen</li>' : "")}</ul>
+        ${d.highlight ? `<p class="wk-highlight">${window.WK_ICON ? WK_ICON("sparkles") : ""}<span>${esc(d.highlight)}</span></p>` : ""}
+        <ul class="wk-chips">${chips || ""}</ul>
         ${vid ? `<button class="wk-video" type="button" data-video="${vid}" style="background-image:url('https://img.youtube.com/vi/${vid}/hqdefault.jpg')"><span>${window.WK_ICON ? WK_ICON("play") : "▶"}</span></button>` : ""}
         ${d.satz ? `<blockquote class="wk-satz">${esc(d.satz)}</blockquote>` : (opts.platzhalter ? '<blockquote class="wk-satz leer">Der wichtigste Satz: Warum sollte man diesen Kurs wählen?</blockquote>' : "")}
         <footer class="wk-fuss"><span>BG/BRG Knittelfeld</span>${d.klasse ? `<span>${esc(d.klasse.toUpperCase())}</span>` : ""}</footer>

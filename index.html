@@ -37,7 +37,7 @@
   .karten-halter.drop-ziel { transform: scale(1.03); }
   .karten-halter.drop-ziel::after { content: ""; position: absolute; inset: -8px; border: 3px dashed var(--ok); border-radius: 28px; pointer-events: none; }
   .karten-halter .wk-chip { cursor: pointer; }
-  .karten-halter .wk-chip:not(.leer)::after { content: "×"; margin-left: 1cqw; opacity: .6; font-weight: 700; }
+  .karten-halter .wk-chip:not(.leer):not(.tag)::after { content: "×"; margin-left: 1cqw; opacity: .6; font-weight: 700; }
   .karten-halter .wk-sticker { pointer-events: none; }
   .karten-halter .stk { pointer-events: auto; cursor: grab; touch-action: none; }
   .karten-halter .stk.aktiv { outline: 2px dashed rgba(255,255,255,.85); outline-offset: 4px; border-radius: 12px; animation: none; }
@@ -56,6 +56,11 @@
   .denk { margin: 14px 0; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.05); border-left: 3px solid #ffd23f; font-size: 14.5px; line-height: 1.45; color: #dcd8f5; }
   .denk ul { margin: 6px 0 0; padding-left: 18px; }
   .denk li { margin: 3px 0; }
+  .tags { display: grid; gap: 10px; }
+  .tagfeld { display: flex; align-items: center; background: var(--bg); border: 1.5px solid var(--linie); border-radius: 14px; padding: 0 14px; }
+  .tagfeld:focus-within { border-color: var(--akz); }
+  .tagfeld span { font-family: "Barlow Condensed", sans-serif; font-weight: 800; font-size: 28px; color: var(--akz); margin-right: 4px; }
+  .tagfeld input { flex: 1; background: none; border: 0; outline: none; color: var(--text); font-size: 20px; font-weight: 700; padding: 13px 0; min-width: 0; }
   .fuss .btn.unklar { opacity: .55; }
   .fuss .btn:disabled { opacity: .35; cursor: not-allowed; box-shadow: none; }
   #zurueckBtn { flex: 0 0 auto; padding-left: 22px; padding-right: 22px; }
@@ -127,6 +132,13 @@
   .farbe.an { border-color: #fff; transform: scale(1.08); }
   .farbe.eigene { position: relative; display: grid; place-items: center; background: conic-gradient(#ff3d7f, #ffd23f, #b6ff3d, #00d9c0, #2ea8ff, #7c5cff, #ff3d7f); overflow: hidden; }
   .farbe.eigene .ic { width: 20px; height: 20px; color: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)); }
+  .mixer { display: none; margin-top: 14px; padding: 14px; border-radius: 14px; background: var(--bg); border: 1px solid var(--linie); gap: 12px; }
+  .mixer.an { display: grid; }
+  .mixer label { display: grid; gap: 6px; font-size: 13px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: .08em; }
+  .mixer input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 22px; border-radius: 99px; outline: none; }
+  #mxH { background: linear-gradient(90deg, hsl(0 90% 55%), hsl(60 90% 55%), hsl(120 90% 55%), hsl(180 90% 55%), hsl(240 90% 55%), hsl(300 90% 55%), hsl(360 90% 55%)); }
+  .mixer input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 3px solid #0b0920; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
+  .mixer input[type=range]::-moz-range-thumb { width: 26px; height: 26px; border-radius: 50%; background: #fff; border: 3px solid #0b0920; }
   .farbe.eigene input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; border: 0; padding: 0; }
   .pillen { display: flex; flex-wrap: wrap; gap: 8px; }
   .pille { border: 1.5px solid var(--linie); background: var(--bg); border-radius: 99px; padding: 9px 14px; font-weight: 600; font-size: 14px; cursor: pointer; }
@@ -199,7 +211,7 @@
         <button data-a="drehen" aria-label="Drehen" data-ic="rotate-cw"></button>
         <button data-a="weg" aria-label="Löschen" data-ic="trash-2"></button>
       </div>
-      <div class="tipp-buehne">Deine Karte wächst mit jedem Schritt · Antippen entfernt einen Baustein</div>
+      <div class="tipp-buehne">Deine Karte wächst mit jedem Schritt</div>
     </section>
 
     <aside class="panel">
@@ -255,23 +267,23 @@
           <div class="zaehler"><span id="inhaltZ">0</span>/240 · mindestens ein, zwei Sätze</div>
         </section>
 
-        <section class="seite" data-s="3" data-name="Wo und mit wem">
-          <h3>Wo und mit wem?</h3>
-          <p class="hilfe">Ein Kurs muss nicht im Klassenzimmer stattfinden. Zieh auf die Karte, was passt, oder tipp es an.</p>
-          <div class="denk"><b>Frag dich:</b> Wer könnte euch etwas zeigen, das kein Schulbuch kann? Wo wäre der beste Ort dafür?</div>
-          <div id="bausteinA"></div>
-          <div class="gruppe-titel">Fehlt etwas? Eigener Baustein</div>
-          <div class="eigen-zeile">
-            <input class="feld" id="eigenB" maxlength="28" placeholder="z. B. Mit einer Imkerin" autocomplete="off">
-            <button class="btn" id="eigenBtn">Dazu</button>
-          </div>
+        <section class="seite" data-s="3" data-name="Das Highlight">
+          <h3>Wohin bringt dich dein Kurs?</h3>
+          <p class="hilfe">Ein Kurs muss nicht im Klassenzimmer bleiben. Er kann an den See führen, auf einen Berg, nach Wien oder Brüssel, in eine Firma, ein Labor, auf eine Bühne.</p>
+          <div class="denk"><b>Stell dir vor:</b> Das Semester ist vorbei. Von welchem einen Moment erzählen alle noch Wochen später?</div>
+          <input class="feld" id="highlight" maxlength="80" placeholder="Das Highlight meines Kurses ist …" autocomplete="off">
+          <div class="zaehler"><span id="highlightZ">0</span>/80</div>
         </section>
 
-        <section class="seite" data-s="4" data-name="Was herauskommt">
-          <h3>Was kommt am Ende heraus?</h3>
-          <p class="hilfe">Die besten Kurse haben ein Ziel, auf das man hinarbeitet. Und wie arbeitet ihr?</p>
-          <div class="denk"><b>Stell dir vor:</b> Das Semester ist vorbei. Was kannst du herzeigen, und wem?</div>
-          <div id="bausteinB"></div>
+        <section class="seite" data-s="4" data-name="Mach ihn bekannt">
+          <h3>Wie machst du deinen Kurs bekannt?</h3>
+          <p class="hilfe">Du willst, dass sich möglichst viele für deinen Kurs anmelden. Mit welchen Hashtags würdest du ihn posten, damit deine Freundinnen und Freunde sofort wissen, worum es geht?</p>
+          <div class="denk"><b>Gute Hashtags</b> sind kurz, treffen den Kern und machen neugierig. Eigene Wortschöpfungen sind erlaubt.</div>
+          <div class="tags">
+            <label class="tagfeld"><span>#</span><input id="tag0" maxlength="24" autocomplete="off" autocapitalize="off" placeholder="erster"></label>
+            <label class="tagfeld"><span>#</span><input id="tag1" maxlength="24" autocomplete="off" autocapitalize="off" placeholder="zweiter"></label>
+            <label class="tagfeld"><span>#</span><input id="tag2" maxlength="24" autocomplete="off" autocapitalize="off" placeholder="dritter"></label>
+          </div>
         </section>
 
         <section class="seite" data-s="5" data-name="Der wichtigste Satz">
@@ -291,11 +303,16 @@
           <div class="kacheln" id="hintergruende"></div>
           <div class="gruppe-titel">Farbe · ganz rechts mischst du deine eigene</div>
           <div class="farben" id="farben"></div>
+          <div class="mixer" id="mixer">
+            <label>Farbton<input type="range" id="mxH" min="0" max="360" value="200"></label>
+            <label>Kräftig<input type="range" id="mxS" min="20" max="100" value="85"></label>
+            <label>Hell<input type="range" id="mxL" min="20" max="80" value="55"></label>
+          </div>
         </section>
 
         <section class="seite" data-s="7" data-name="Sticker">
           <h3>Der letzte Schliff</h3>
-          <p class="hilfe">Ein paar Sticker, wenn du magst. Auf die Karte ziehen, dort antippen zum Verschieben, Vergrößern, Drehen oder Löschen.</p>
+          <p class="hilfe">Bis zu drei Sticker, wenn du magst. Auf die Karte ziehen, dort antippen zum Verschieben, Vergrößern, Drehen oder Löschen.</p>
           <div class="sticker-raster" id="stickerListe"></div>
         </section>
       </div>
@@ -340,7 +357,7 @@
   if (!klasse) $("#klasseInput").style.display = "block";
 
   // ---------- Zustand ----------
-  const leer = () => ({ titel: "", untertitel: "", inhalt: "", satz: "", theme: "neon", bg: "aurora", farbe: K.FARBEN[0], welt: null, bausteine: [], sticker: [], bild: null, video: "" });
+  const leer = () => ({ titel: "", untertitel: "", inhalt: "", highlight: "", hashtags: [], satz: "", theme: "neon", bg: "aurora", farbe: K.FARBEN[0], welt: null, bausteine: [], sticker: [], bild: null, video: "" });
   let d = leer();
   try { const s = JSON.parse(localStorage.getItem(SPEICHER) || "null"); if (s) d = Object.assign(leer(), s); } catch (e) {}
   d.bild = null; d.video = ""; d.welt = null;
@@ -359,7 +376,7 @@
     halter.innerHTML = "";
     const karte = K.render(Object.assign({}, d, { klasse }), { platzhalter: true });
     halter.appendChild(karte);
-    karte.querySelectorAll(".wk-chip:not(.leer)").forEach(c => c.addEventListener("click", () => {
+    karte.querySelectorAll(".wk-chip:not(.leer):not(.tag)").forEach(c => c.addEventListener("click", () => {
       d.bausteine.splice(+c.dataset.i, 1); aenderung();
     }));
     karte.querySelectorAll(".stk").forEach(s => stickerBedienung(s, +s.dataset.i));
@@ -375,15 +392,12 @@
   function schrittOk(n) {
     if (n === 1) return d.titel.trim().length >= 3;
     if (n === 2) return (d.inhalt || "").trim().length >= 25;
-    if (n === 3 || n === 4) {
-      const ids = n === 3 ? K.BAUSTEINE.slice(0, 2) : K.BAUSTEINE.slice(2);
-      const erlaubt = new Set(ids.flatMap(g => g.items.map(i => i[0])));
-      return d.bausteine.some(b => typeof b === "string" ? erlaubt.has(b) : n === 3);
-    }
+    if (n === 3) return (d.highlight || "").trim().length >= 5;
+    if (n === 4) return (d.hashtags || []).filter(t => t && t.length >= 2).length >= 1;
     if (n === 5) return (d.satz || "").trim().length >= 10;
     return true;
   }
-  const HINWEIS = { 1: "Gib deinem Kurs zuerst einen Titel.", 2: "Schreib noch ein bisschen mehr dazu, was man macht.", 3: "Wähl mindestens einen Baustein für Ort oder Leute.", 4: "Wähl mindestens einen Baustein dafür, was herauskommt oder wie ihr arbeitet.", 5: "Schreib noch deinen wichtigsten Satz." };
+  const HINWEIS = { 1: "Gib deinem Kurs zuerst einen Titel.", 2: "Schreib noch ein bisschen mehr dazu, was man macht.", 3: "Beschreib noch kurz dein Highlight.", 4: "Mindestens ein Hashtag, bitte.", 5: "Schreib noch deinen wichtigsten Satz." };
   function zeigeSchritt(n) {
     schritt = Math.max(1, Math.min(SCHRITTE, n));
     document.querySelectorAll(".seite").forEach(x => x.classList.toggle("an", +x.dataset.s === schritt));
@@ -512,11 +526,26 @@
     });
     const eigen = !K.FARBEN.includes(d.farbe);
     $("#farben").innerHTML = K.FARBEN.map(f => `<button class="farbe${d.farbe === f ? " an" : ""}" data-f="${f}" style="background:${f}" aria-label="Farbe"></button>`).join("")
-      + `<label class="farbe eigene${eigen ? " an" : ""}" style="${eigen ? "background:" + d.farbe : ""}" title="Eigene Farbe">${eigen ? "" : WK_ICON("palette")}<input type="color" id="farbwahl" value="${eigen ? d.farbe : "#00c2ff"}"></label>`;
-    const fw = $("#farbwahl");
-    fw.addEventListener("input", () => { d.farbe = fw.value; speichern(); zeichnen(); const l = fw.parentElement; l.style.background = fw.value; l.classList.add("an"); l.querySelector(".ic") && l.querySelector(".ic").remove(); document.querySelectorAll(".farbe:not(.eigene)").forEach(x => x.classList.remove("an")); });
+      + `<button class="farbe eigene${eigen ? " an" : ""}" id="eigeneFarbe" style="${eigen ? "background:" + d.farbe : ""}" title="Eigene Farbe">${eigen ? "" : WK_ICON("plus")}</button>`;
+    $("#eigeneFarbe").onclick = e => { e.stopPropagation(); $("#mixer").classList.toggle("an"); mixerAnwenden(); };
   }
-  $("#farben").addEventListener("click", e => { const b = e.target.closest(".farbe"); if (!b) return; d.farbe = b.dataset.f; aenderung(); lookZeichnen(); });
+  $("#farben").addEventListener("click", e => { const b = e.target.closest(".farbe:not(.eigene)"); if (!b) return; $("#mixer").classList.remove("an"); d.farbe = b.dataset.f; aenderung(); lookZeichnen(); });
+
+  function hslHex(h, s2, l) {
+    s2 /= 100; l /= 100; const k = n => (n + h / 30) % 12, a = s2 * Math.min(l, 1 - l);
+    const f = n => Math.round(255 * (l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1))))).toString(16).padStart(2, "0");
+    return "#" + f(0) + f(8) + f(4);
+  }
+  function mixerAnwenden() {
+    const h = +$("#mxH").value, sa = +$("#mxS").value, l = +$("#mxL").value;
+    $("#mxS").style.background = `linear-gradient(90deg, hsl(${h} 20% ${l}%), hsl(${h} 100% ${l}%))`;
+    $("#mxL").style.background = `linear-gradient(90deg, hsl(${h} ${sa}% 20%), hsl(${h} ${sa}% 50%), hsl(${h} ${sa}% 80%))`;
+    if (!$("#mixer").classList.contains("an")) return;
+    d.farbe = hslHex(h, sa, l); speichern(); zeichnen();
+    const b = $("#eigeneFarbe"); b.style.background = d.farbe; b.innerHTML = ""; b.classList.add("an");
+    document.querySelectorAll(".farbe:not(.eigene)").forEach(x => x.classList.remove("an"));
+  }
+  ["#mxH", "#mxS", "#mxL"].forEach(id => $(id).addEventListener("input", mixerAnwenden));
 
   // ---------- Ziehen (Pointer, funktioniert am iPad) ----------
   function ziehbar(el, beimAblegen, geistInhalt) {
@@ -574,13 +603,16 @@
   function bausteinStatus() {
     document.querySelectorAll(".baustein[data-id]").forEach(b => b.classList.toggle("drauf", d.bausteine.includes(b.dataset.id)));
   }
-  $("#eigenBtn").addEventListener("click", () => {
-    const t = $("#eigenB").value.trim(); if (!t) return;
-    if (K.pruefen(t)) return kurzMeldung("Den Baustein bitte anders formulieren.");
-    if (d.bausteine.length >= 8) return kurzMeldung("Höchstens 8 Bausteine.");
-    d.bausteine.push({ eigen: t.slice(0, 28) }); $("#eigenB").value = ""; aenderung();
+  const hl = $("#highlight"); hl.value = d.highlight || ""; $("#highlightZ").textContent = hl.value.length;
+  hl.addEventListener("input", () => { d.highlight = hl.value; $("#highlightZ").textContent = hl.value.length; aenderung(); });
+  [0, 1, 2].forEach(i => {
+    const f = $("#tag" + i); f.value = (d.hashtags || [])[i] || "";
+    f.addEventListener("input", () => {
+      const v = f.value.replace(/^#+/, "").replace(/[\s#]+/g, "").slice(0, 24);
+      if (v !== f.value) f.value = v;
+      d.hashtags = [0, 1, 2].map(j => $("#tag" + j).value).filter(Boolean); aenderung();
+    });
   });
-  $("#eigenB").addEventListener("keydown", e => { if (e.key === "Enter") $("#eigenBtn").click(); });
 
   // ---------- Sticker ----------
   function stickerZeichnen() {
@@ -589,7 +621,7 @@
       const b = document.createElement("div"); b.className = st.t === "t" ? "sticker-text" : "";
       b.innerHTML = K.stickerHTML(st);
       ziehbar(b, pos => {
-        if (d.sticker.length >= 10) return kurzMeldung("Höchstens 10 Sticker.");
+        if (d.sticker.length >= 3) return kurzMeldung("Höchstens 3 Sticker. Tipp einen auf der Karte an, um ihn zu löschen.");
         const p = pos || { x: .2 + Math.random() * .6, y: .25 + Math.random() * .4 };
         d.sticker.push(Object.assign({}, st, { x: +p.x.toFixed(3), y: +p.y.toFixed(3), s: 1, r: Math.round(Math.random() * 30 - 15) }));
         stkAktiv = d.sticker.length - 1; aenderung();
@@ -665,7 +697,7 @@
   $("#neuBtn").addEventListener("click", () => {
     if (!confirm("Wirklich von vorne beginnen? Deine Karte wird gelöscht.")) return;
     d = leer(); stkAktiv = -1; speichern();
-    titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; bildStatus();
+    titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; hl.value = ""; $("#highlightZ").textContent = "0"; [0,1,2].forEach(i => $("#tag" + i).value = ""); $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; bildStatus();
     lookZeichnen(); aenderung(); zeigeSchritt(1);
   });
 
@@ -701,7 +733,7 @@
           <p style="color:var(--text2);margin:0;font-size:17px;line-height:1.45">Danke für deine Idee. Wer weiß, vielleicht wird daraus einmal ein echter Kurs.</p>
           <div class="knoepfe"><button class="btn" id="nochmal">Noch einen Kurs bauen</button><button class="btn" id="schliessen">Zurück zur Karte</button></div>`;
         $("#schliessen").onclick = () => fertig.classList.remove("an");
-        $("#nochmal").onclick = () => { fertig.classList.remove("an"); d = leer(); speichern(); titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; bildStatus(); lookZeichnen(); aenderung(); zeigeSchritt(1); };
+        $("#nochmal").onclick = () => { fertig.classList.remove("an"); d = leer(); speichern(); titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; hl.value = ""; $("#highlightZ").textContent = "0"; [0,1,2].forEach(i => $("#tag" + i).value = ""); $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; bildStatus(); lookZeichnen(); aenderung(); zeigeSchritt(1); };
       }, 900);
     } catch (err) {
       btn.disabled = false; btn.textContent = "Nochmal versuchen";
@@ -728,7 +760,7 @@
   document.querySelectorAll("[data-ic]").forEach(el => { el.insertAdjacentHTML("afterbegin", WK_ICON(el.dataset.ic)); });
 
   // ---------- Start ----------
-  lookZeichnen(); bausteineZeichnen(); stickerZeichnen(); ideenMischen(); bildStatus(); zeichnen(); zeigeSchritt(1);
+  lookZeichnen(); stickerZeichnen(); ideenMischen(); bildStatus(); zeichnen(); zeigeSchritt(1);
 })();
 </script>
 </body>
