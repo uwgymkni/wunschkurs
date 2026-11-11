@@ -125,6 +125,9 @@
   .farben { display: flex; flex-wrap: wrap; gap: 10px; }
   .farbe { width: 42px; height: 42px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; box-shadow: inset 0 0 0 2px rgba(0,0,0,.2); }
   .farbe.an { border-color: #fff; transform: scale(1.08); }
+  .farbe.eigene { position: relative; display: grid; place-items: center; background: conic-gradient(#ff3d7f, #ffd23f, #b6ff3d, #00d9c0, #2ea8ff, #7c5cff, #ff3d7f); overflow: hidden; }
+  .farbe.eigene .ic { width: 20px; height: 20px; color: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,.6)); }
+  .farbe.eigene input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; border: 0; padding: 0; }
   .pillen { display: flex; flex-wrap: wrap; gap: 8px; }
   .pille { border: 1.5px solid var(--linie); background: var(--bg); border-radius: 99px; padding: 9px 14px; font-weight: 600; font-size: 14px; cursor: pointer; }
   .pille.an { border-color: var(--akz); background: rgba(255,61,127,.15); }
@@ -286,13 +289,8 @@
           <div class="kacheln" id="themes"></div>
           <div class="gruppe-titel">Hintergrund</div>
           <div class="kacheln" id="hintergruende"></div>
-          <div class="gruppe-titel">Farbe</div>
+          <div class="gruppe-titel">Farbe · ganz rechts mischst du deine eigene</div>
           <div class="farben" id="farben"></div>
-          <div class="gruppe-titel">Passt zu welchem Bereich? (optional)</div>
-          <div class="pillen" id="welten"></div>
-          <div class="gruppe-titel">Passendes YouTube-Video (optional)</div>
-          <input class="feld" id="video" placeholder="Link einfügen" autocomplete="off" inputmode="url">
-          <div class="zaehler" id="videoInfo"></div>
         </section>
 
         <section class="seite" data-s="7" data-name="Sticker">
@@ -345,7 +343,7 @@
   const leer = () => ({ titel: "", untertitel: "", inhalt: "", satz: "", theme: "neon", bg: "aurora", farbe: K.FARBEN[0], welt: null, bausteine: [], sticker: [], bild: null, video: "" });
   let d = leer();
   try { const s = JSON.parse(localStorage.getItem(SPEICHER) || "null"); if (s) d = Object.assign(leer(), s); } catch (e) {}
-  d.bild = null;
+  d.bild = null; d.video = ""; d.welt = null;
   let stkAktiv = -1;
 
   function speichern() {
@@ -512,12 +510,13 @@
       b.onclick = () => { d.bg = h.id; aenderung(); lookZeichnen(); };
       hg.appendChild(b);
     });
-    $("#farben").innerHTML = K.FARBEN.map(f => `<button class="farbe${d.farbe === f ? " an" : ""}" data-f="${f}" style="background:${f}" aria-label="Farbe"></button>`).join("");
-    $("#welten").innerHTML = K.WELTEN.map(w => `<button class="pille${d.welt === w.id ? " an" : ""}" data-w="${w.id}">${w.name}</button>`).join("")
-      + `<button class="pille${!d.welt ? " an" : ""}" data-w="">Keiner</button>`;
+    const eigen = !K.FARBEN.includes(d.farbe);
+    $("#farben").innerHTML = K.FARBEN.map(f => `<button class="farbe${d.farbe === f ? " an" : ""}" data-f="${f}" style="background:${f}" aria-label="Farbe"></button>`).join("")
+      + `<label class="farbe eigene${eigen ? " an" : ""}" style="${eigen ? "background:" + d.farbe : ""}" title="Eigene Farbe">${eigen ? "" : WK_ICON("palette")}<input type="color" id="farbwahl" value="${eigen ? d.farbe : "#00c2ff"}"></label>`;
+    const fw = $("#farbwahl");
+    fw.addEventListener("input", () => { d.farbe = fw.value; speichern(); zeichnen(); const l = fw.parentElement; l.style.background = fw.value; l.classList.add("an"); l.querySelector(".ic") && l.querySelector(".ic").remove(); document.querySelectorAll(".farbe:not(.eigene)").forEach(x => x.classList.remove("an")); });
   }
   $("#farben").addEventListener("click", e => { const b = e.target.closest(".farbe"); if (!b) return; d.farbe = b.dataset.f; aenderung(); lookZeichnen(); });
-  $("#welten").addEventListener("click", e => { const b = e.target.closest(".pille"); if (!b) return; d.welt = b.dataset.w || null; aenderung(); lookZeichnen(); });
 
   // ---------- Ziehen (Pointer, funktioniert am iPad) ----------
   function ziehbar(el, beimAblegen, geistInhalt) {
@@ -634,10 +633,6 @@
 
   // ---------- Bild & Video ----------
   function bildStatus() {}
-  const video = $("#video"); video.value = d.video || "";
-  function videoInfo() { const id = K.youtubeId(video.value); $("#videoInfo").textContent = video.value ? (id ? "Video erkannt ✓" : "Das ist kein YouTube-Link.") : ""; }
-  video.addEventListener("input", () => { d.video = K.youtubeId(video.value) ? video.value.trim() : ""; videoInfo(); aenderung(); });
-  videoInfo();
 
   // ---------- Satz ----------
   const inhalt = $("#inhalt"); inhalt.value = d.inhalt || ""; $("#inhaltZ").textContent = inhalt.value.length;
@@ -670,7 +665,7 @@
   $("#neuBtn").addEventListener("click", () => {
     if (!confirm("Wirklich von vorne beginnen? Deine Karte wird gelöscht.")) return;
     d = leer(); stkAktiv = -1; speichern();
-    titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; video.value = ""; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; videoInfo(); bildStatus();
+    titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; bildStatus();
     lookZeichnen(); aenderung(); zeigeSchritt(1);
   });
 
@@ -706,7 +701,7 @@
           <p style="color:var(--text2);margin:0;font-size:17px;line-height:1.45">Danke für deine Idee. Wer weiß, vielleicht wird daraus einmal ein echter Kurs.</p>
           <div class="knoepfe"><button class="btn" id="nochmal">Noch einen Kurs bauen</button><button class="btn" id="schliessen">Zurück zur Karte</button></div>`;
         $("#schliessen").onclick = () => fertig.classList.remove("an");
-        $("#nochmal").onclick = () => { fertig.classList.remove("an"); d = leer(); speichern(); titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; video.value = ""; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; videoInfo(); bildStatus(); lookZeichnen(); aenderung(); zeigeSchritt(1); };
+        $("#nochmal").onclick = () => { fertig.classList.remove("an"); d = leer(); speichern(); titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; bildStatus(); lookZeichnen(); aenderung(); zeigeSchritt(1); };
       }, 900);
     } catch (err) {
       btn.disabled = false; btn.textContent = "Nochmal versuchen";

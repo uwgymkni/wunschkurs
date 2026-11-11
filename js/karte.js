@@ -29,6 +29,11 @@
     { id: "retro", name: "Retro-Game" },
     { id: "poster", name: "Poster" },
     { id: "minimal", name: "Clean" },
+    { id: "street", name: "Street" },
+    { id: "terminal", name: "Terminal" },
+    { id: "comic", name: "Comic" },
+    { id: "natur", name: "Natur" },
+    { id: "kino", name: "Kino" },
   ];
 
   const HINTERGRUENDE = [
@@ -40,6 +45,12 @@
     { id: "verlauf", name: "Farbfluss" },
     { id: "streifen", name: "Speed" },
     { id: "ruhe", name: "Ruhig" },
+    { id: "raster", name: "Comic-Punkte" },
+    { id: "code", name: "Code-Regen" },
+    { id: "netz", name: "Netz" },
+    { id: "berge", name: "Berge" },
+    { id: "ringe", name: "Ringe" },
+    { id: "konfetti", name: "Konfetti" },
   ];
 
   const FARBEN = ["#ff3d7f", "#00d9c0", "#ffd23f", "#7c5cff", "#ff7a1a", "#2ea8ff", "#b6ff3d", "#e23b4e"];
@@ -103,6 +114,11 @@
       case "wellen": return '<i class="w1"></i><i class="w2"></i><i class="w3"></i>';
       case "blasen": return Array.from({ length: 9 }, (_, i) => `<i class="bl" style="--i:${i}"></i>`).join("");
       case "streifen": return '<i class="st"></i>';
+      case "code": return Array.from({ length: 12 }, (_, i) => `<i class="cr" style="--i:${i}"></i>`).join("");
+      case "netz": return '<i class="nz"></i>';
+      case "berge": return '<i class="bg1"></i><i class="bg2"></i><i class="bg3"></i>';
+      case "ringe": return '<i class="r1"></i><i class="r2"></i><i class="r3"></i>';
+      case "konfetti": return Array.from({ length: 18 }, (_, i) => `<i class="kf" style="--i:${i}"></i>`).join("");
       default: return "";
     }
   }
