@@ -48,6 +48,17 @@
   .stk-werkzeug button { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--panel2); font-size: 18px; cursor: pointer; }
 
   .panel { background: var(--panel); border-left: 1px solid var(--linie); display: grid; grid-template-rows: auto 1fr auto; min-height: 0; }
+  .fortschritt { padding: 14px 18px 12px; }
+  .schritt-info { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--text2); margin-bottom: 8px; }
+  .schritt-info #schrittName { color: var(--text); }
+  .balken { height: 6px; border-radius: 99px; background: rgba(255,255,255,.08); overflow: hidden; }
+  .balken i { display: block; height: 100%; width: 14%; border-radius: 99px; background: linear-gradient(90deg, var(--akz), #7c5cff); transition: width .4s cubic-bezier(.2,.9,.3,1); }
+  .denk { margin: 14px 0; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.05); border-left: 3px solid #ffd23f; font-size: 14.5px; line-height: 1.45; color: #dcd8f5; }
+  .denk ul { margin: 6px 0 0; padding-left: 18px; }
+  .denk li { margin: 3px 0; }
+  .fuss .btn.unklar { opacity: .55; }
+  .fuss .btn:disabled { opacity: .35; cursor: not-allowed; box-shadow: none; }
+  #zurueckBtn { flex: 0 0 auto; padding-left: 22px; padding-right: 22px; }
   .reiter { display: flex; gap: 4px; padding: 10px 10px 0; overflow-x: auto; scrollbar-width: none; }
   .reiter::-webkit-scrollbar { display: none; }
   .reiter button { flex: 1 0 auto; border: 0; background: transparent; padding: 10px 10px 12px; border-radius: 12px 12px 0 0; font-weight: 700; font-size: 14px; color: var(--text2); cursor: pointer; display: grid; justify-items: center; gap: 3px; }
@@ -185,32 +196,28 @@
         <button data-a="drehen" aria-label="Drehen" data-ic="rotate-cw"></button>
         <button data-a="weg" aria-label="Löschen" data-ic="trash-2"></button>
       </div>
-      <div class="tipp-buehne">Bausteine und Sticker auf die Karte ziehen · Tippen entfernt Bausteine</div>
+      <div class="tipp-buehne">Deine Karte wächst mit jedem Schritt · Antippen entfernt einen Baustein</div>
     </section>
 
     <aside class="panel">
-      <nav class="reiter" id="reiter">
-        <button data-s="idee" class="an"><i data-ic="lightbulb"></i>Idee</button>
-        <button data-s="look"><i data-ic="palette"></i>Look</button>
-        <button data-s="bausteine"><i data-ic="blocks"></i>Bausteine</button>
-        <button data-s="sticker"><i data-ic="sticker"></i>Sticker</button>
-        <button data-s="satz"><i data-ic="message-square-quote"></i>Satz</button>
-      </nav>
+      <div class="fortschritt">
+        <div class="schritt-info"><span id="schrittNr">Schritt 1 von 7</span><span id="schrittName"></span></div>
+        <div class="balken"><i id="balken"></i></div>
+      </div>
       <div class="seiten">
-        <section class="seite an" data-s="idee">
-          <h3>Deine Kursidee</h3>
-          <p class="hilfe">Es gibt keine falsche Idee. Wir suchen echte Vorschläge von euch für die Oberstufe. Vielleicht wird deiner einmal wirklich angeboten.</p>
+        <section class="seite an" data-s="1" data-name="Die Idee">
+          <h3>Was wäre dein Kurs?</h3>
+          <p class="hilfe">Es gibt keine falsche Idee. Wir suchen echte Vorschläge für die Oberstufe. Vielleicht wird deiner einmal wirklich angeboten.</p>
           <div class="frage-box">
             <div class="frage" id="funke"></div>
             <button class="btn klein" id="andereFrage">Andere Frage</button>
           </div>
           <input class="feld" id="titel" maxlength="60" placeholder="Wie heißt dein Kurs?" autocomplete="off">
           <div class="zaehler"><span id="titelZ">0</span>/60</div>
-          <input class="feld" id="untertitel" maxlength="70" placeholder="Untertitel (optional)" autocomplete="off">
-          <div class="gruppe-titel">Was würde man in deinem Kurs machen oder lernen?</div>
-          <textarea class="feld" id="inhalt" maxlength="240" placeholder="Beschreib es in ein paar Sätzen, so wie du es einer Freundin oder einem Freund erklären würdest."></textarea>
-          <div class="zaehler"><span id="inhaltZ">0</span>/240</div>
-
+          <input class="feld" id="untertitel" maxlength="70" placeholder="Untertitel, wenn du magst" autocomplete="off">
+          <div class="denk">
+            <b>Tipp:</b> Ein guter Titel macht neugierig. Lieber „Wie kommt der Ton ins Video?“ als „Medienkunde“.
+          </div>
           <details class="anstoss">
             <summary>Kein Plan? Hol dir einen kleinen Anstoß</summary>
             <p class="hilfe" style="margin-top:10px">Der Automat würfelt zufällige Kombinationen. Nimm sie als Funken, nicht als Vorlage.</p>
@@ -230,8 +237,50 @@
           </details>
         </section>
 
-        <section class="seite" data-s="look">
-          <h3>Dein Look</h3>
+        <section class="seite" data-s="2" data-name="Was man macht">
+          <h3>Was macht man in deinem Kurs?</h3>
+          <p class="hilfe">Beschreib es so, wie du es einer Freundin oder einem Freund erklären würdest.</p>
+          <div class="denk">
+            <b>Denk an:</b>
+            <ul>
+              <li>Was passiert in der allerersten Stunde?</li>
+              <li>Was kann man am Ende, was man vorher nicht konnte?</li>
+              <li>Was wäre der spannendste Moment im ganzen Semester?</li>
+            </ul>
+          </div>
+          <textarea class="feld" id="inhalt" maxlength="240" placeholder="In meinem Kurs …"></textarea>
+          <div class="zaehler"><span id="inhaltZ">0</span>/240 · mindestens ein, zwei Sätze</div>
+        </section>
+
+        <section class="seite" data-s="3" data-name="Wo und mit wem">
+          <h3>Wo und mit wem?</h3>
+          <p class="hilfe">Ein Kurs muss nicht im Klassenzimmer stattfinden. Zieh auf die Karte, was passt, oder tipp es an.</p>
+          <div class="denk"><b>Frag dich:</b> Wer könnte euch etwas zeigen, das kein Schulbuch kann? Wo wäre der beste Ort dafür?</div>
+          <div id="bausteinA"></div>
+          <div class="gruppe-titel">Fehlt etwas? Eigener Baustein</div>
+          <div class="eigen-zeile">
+            <input class="feld" id="eigenB" maxlength="28" placeholder="z. B. Mit einer Imkerin" autocomplete="off">
+            <button class="btn" id="eigenBtn">Dazu</button>
+          </div>
+        </section>
+
+        <section class="seite" data-s="4" data-name="Was herauskommt">
+          <h3>Was kommt am Ende heraus?</h3>
+          <p class="hilfe">Die besten Kurse haben ein Ziel, auf das man hinarbeitet. Und wie arbeitet ihr?</p>
+          <div class="denk"><b>Stell dir vor:</b> Das Semester ist vorbei. Was kannst du herzeigen, und wem?</div>
+          <div id="bausteinB"></div>
+        </section>
+
+        <section class="seite" data-s="5" data-name="Der wichtigste Satz">
+          <h3>Der wichtigste Satz</h3>
+          <p class="hilfe">Warum sollte jemand genau diesen Kurs wählen? Diesen Satz haben auch eure Lehrerinnen und Lehrer für ihre Kursideen geschrieben.</p>
+          <div class="denk"><b>So kann er anfangen:</b> „Hier lernst du …“, „Stell dir vor, …“, „Wer schon immer …“</div>
+          <textarea class="feld" id="satz" maxlength="160" placeholder="Ein Satz, der neugierig macht"></textarea>
+          <div class="zaehler"><span id="satzZ">0</span>/160</div>
+        </section>
+
+        <section class="seite" data-s="6" data-name="Der Look">
+          <h3>Gib deinem Kurs einen Look</h3>
           <p class="hilfe">Stil, bewegter Hintergrund und Farbe. Probier ruhig alles durch.</p>
           <div class="gruppe-titel">Stil</div>
           <div class="kacheln" id="themes"></div>
@@ -246,32 +295,15 @@
           <div class="zaehler" id="videoInfo"></div>
         </section>
 
-        <section class="seite" data-s="bausteine">
-          <h3>Bausteine</h3>
-          <p class="hilfe">Zieh, was zu deinem Kurs passt, auf die Karte. Oder einfach antippen.</p>
-          <div id="bausteinListe"></div>
-          <div class="gruppe-titel">Eigener Baustein</div>
-          <div class="eigen-zeile">
-            <input class="feld" id="eigenB" maxlength="28" placeholder="z. B. Mit Hund" autocomplete="off">
-            <button class="btn" id="eigenBtn">Dazu</button>
-          </div>
-        </section>
-
-        <section class="seite" data-s="sticker">
-          <h3>Sticker</h3>
-          <p class="hilfe">Auf die Karte ziehen. Antippen auf der Karte zum Verschieben, Vergrößern, Drehen oder Löschen.</p>
+        <section class="seite" data-s="7" data-name="Sticker">
+          <h3>Der letzte Schliff</h3>
+          <p class="hilfe">Ein paar Sticker, wenn du magst. Auf die Karte ziehen, dort antippen zum Verschieben, Vergrößern, Drehen oder Löschen.</p>
           <div class="sticker-raster" id="stickerListe"></div>
-        </section>
-
-        <section class="seite" data-s="satz">
-          <h3>Der wichtigste Satz</h3>
-          <p class="hilfe">Warum sollte jemand genau diesen Kurs wählen? Ein Satz, der neugierig macht. Genau diesen Satz haben auch eure Lehrerinnen und Lehrer für ihre Kursideen geschrieben.</p>
-          <textarea class="feld" id="satz" maxlength="160" placeholder="z. B. „Hier lernst du, Dinge zu bauen, die wirklich fliegen.“"></textarea>
-          <div class="zaehler"><span id="satzZ">0</span>/160</div>
         </section>
       </div>
       <div class="fuss">
-        <button class="btn haupt" id="fertigBtn">Fertig</button>
+        <button class="btn" id="zurueckBtn">Zurück</button>
+        <button class="btn haupt" id="weiterBtn">Weiter</button>
       </div>
     </aside>
   </main>
@@ -337,13 +369,43 @@
     werkzeugPosition();
     bausteinStatus();
   }
-  function aenderung() { speichern(); zeichnen(); }
+  function aenderung() { speichern(); zeichnen(); if (typeof knoepfe === "function") knoepfe(); }
 
   // ---------- Reiter ----------
-  $("#reiter").addEventListener("click", e => {
-    const b = e.target.closest("button"); if (!b) return;
-    document.querySelectorAll("#reiter button").forEach(x => x.classList.toggle("an", x === b));
-    document.querySelectorAll(".seite").forEach(x => x.classList.toggle("an", x.dataset.s === b.dataset.s));
+  // ---------- Schritte ----------
+  const SCHRITTE = 7; let schritt = 1;
+  function schrittOk(n) {
+    if (n === 1) return d.titel.trim().length >= 3;
+    if (n === 2) return (d.inhalt || "").trim().length >= 25;
+    if (n === 3 || n === 4) {
+      const ids = n === 3 ? K.BAUSTEINE.slice(0, 2) : K.BAUSTEINE.slice(2);
+      const erlaubt = new Set(ids.flatMap(g => g.items.map(i => i[0])));
+      return d.bausteine.some(b => typeof b === "string" ? erlaubt.has(b) : n === 3);
+    }
+    if (n === 5) return (d.satz || "").trim().length >= 10;
+    return true;
+  }
+  const HINWEIS = { 1: "Gib deinem Kurs zuerst einen Titel.", 2: "Schreib noch ein bisschen mehr dazu, was man macht.", 3: "Wähl mindestens einen Baustein für Ort oder Leute.", 4: "Wähl mindestens einen Baustein dafür, was herauskommt oder wie ihr arbeitet.", 5: "Schreib noch deinen wichtigsten Satz." };
+  function zeigeSchritt(n) {
+    schritt = Math.max(1, Math.min(SCHRITTE, n));
+    document.querySelectorAll(".seite").forEach(x => x.classList.toggle("an", +x.dataset.s === schritt));
+    const sec = document.querySelector(`.seite[data-s="${schritt}"]`);
+    $("#schrittNr").textContent = `Schritt ${schritt} von ${SCHRITTE}`;
+    $("#schrittName").textContent = sec.dataset.name;
+    $("#balken").style.width = (schritt / SCHRITTE * 100) + "%";
+    document.querySelector(".seiten").scrollTop = 0;
+    knoepfe();
+  }
+  function knoepfe() {
+    $("#zurueckBtn").disabled = schritt === 1;
+    $("#weiterBtn").textContent = schritt === SCHRITTE ? "Fertig" : "Weiter";
+    $("#weiterBtn").classList.toggle("unklar", !schrittOk(schritt));
+  }
+  $("#zurueckBtn").addEventListener("click", () => zeigeSchritt(schritt - 1));
+  $("#weiterBtn").addEventListener("click", () => {
+    if (!schrittOk(schritt)) return kurzMeldung(HINWEIS[schritt]);
+    if (K.kartePruefen(d)) return kurzMeldung("Da steht etwas, das so nicht passt. Formulier es bitte um.");
+    if (schritt < SCHRITTE) zeigeSchritt(schritt + 1); else fertigZeigen();
   });
 
   // ---------- Idee ----------
@@ -490,17 +552,19 @@
 
   // ---------- Bausteine ----------
   function bausteineZeichnen() {
-    const box = $("#bausteinListe"); box.innerHTML = "";
-    K.BAUSTEINE.forEach(g => {
-      box.insertAdjacentHTML("beforeend", `<div class="gruppe-titel">${g.gruppe}</div>`);
-      const zeile = document.createElement("div");
-      g.items.forEach(([id, icon, label]) => {
-        const b = document.createElement("span"); b.className = "baustein"; b.dataset.id = id;
-        b.innerHTML = `${WK_ICON(icon)}${label}`;
-        ziehbar(b, () => bausteinDazu(id), () => `<span class="baustein" style="background:#1e1a3f">${WK_ICON(icon)} ${label}</span>`);
-        zeile.appendChild(b);
+    [["#bausteinA", K.BAUSTEINE.slice(0, 2)], ["#bausteinB", K.BAUSTEINE.slice(2)]].forEach(([sel, gruppen]) => {
+      const box = $(sel); box.innerHTML = "";
+      gruppen.forEach(g => {
+        box.insertAdjacentHTML("beforeend", `<div class="gruppe-titel">${g.gruppe}</div>`);
+        const zeile = document.createElement("div");
+        g.items.forEach(([id, icon, label]) => {
+          const b = document.createElement("span"); b.className = "baustein"; b.dataset.id = id;
+          b.innerHTML = `${WK_ICON(icon)}${label}`;
+          ziehbar(b, () => bausteinDazu(id), () => `<span class="baustein" style="background:#1e1a3f">${WK_ICON(icon)} ${label}</span>`);
+          zeile.appendChild(b);
+        });
+        box.appendChild(zeile);
       });
-      box.appendChild(zeile);
     });
   }
   function bausteinDazu(id) {
@@ -509,7 +573,7 @@
     d.bausteine.push(id); aenderung();
   }
   function bausteinStatus() {
-    document.querySelectorAll("#bausteinListe .baustein").forEach(b => b.classList.toggle("drauf", d.bausteine.includes(b.dataset.id)));
+    document.querySelectorAll(".baustein[data-id]").forEach(b => b.classList.toggle("drauf", d.bausteine.includes(b.dataset.id)));
   }
   $("#eigenBtn").addEventListener("click", () => {
     const t = $("#eigenB").value.trim(); if (!t) return;
@@ -577,7 +641,7 @@
 
   // ---------- Satz ----------
   const inhalt = $("#inhalt"); inhalt.value = d.inhalt || ""; $("#inhaltZ").textContent = inhalt.value.length;
-  inhalt.addEventListener("input", () => { d.inhalt = inhalt.value; $("#inhaltZ").textContent = inhalt.value.length; speichern(); });
+  inhalt.addEventListener("input", () => { d.inhalt = inhalt.value; $("#inhaltZ").textContent = inhalt.value.length; speichern(); knoepfe(); });
   const satz = $("#satz"); satz.value = d.satz; $("#satzZ").textContent = d.satz.length;
   satz.addEventListener("input", () => { d.satz = satz.value; $("#satzZ").textContent = satz.value.length; aenderung(); });
 
@@ -607,16 +671,13 @@
     if (!confirm("Wirklich von vorne beginnen? Deine Karte wird gelöscht.")) return;
     d = leer(); stkAktiv = -1; speichern();
     titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; video.value = ""; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; videoInfo(); bildStatus();
-    lookZeichnen(); aenderung();
+    lookZeichnen(); aenderung(); zeigeSchritt(1);
   });
 
   // ---------- Fertig & Einreichen ----------
   const fertig = $("#fertig"), box = $("#fertigBox");
-  $("#fertigBtn").addEventListener("click", () => {
-    if (!d.titel.trim()) {
-      document.querySelector('#reiter [data-s="idee"]').click(); titel.focus();
-      return kurzMeldung("Dein Kurs braucht noch einen Titel.");
-    }
+  function fertigZeigen() {
+    for (let n = 1; n <= 5; n++) if (!schrittOk(n)) { zeigeSchritt(n); return kurzMeldung(HINWEIS[n]); }
     if (K.kartePruefen(d)) {
       return kurzMeldung("Da steht etwas, das so nicht passt. Formulier es bitte um.");
     }
@@ -624,14 +685,14 @@
     box.innerHTML = `<div class="karten-flip"><div class="innen" id="flipInnen"></div></div>
       <h2>So sieht dein Kurs aus!</h2>
       <div class="knoepfe">
-        <button class="btn" id="zurueck">Weiter bearbeiten</button>
+        <button class="btn" id="zurueck">Zurück und ändern</button>
         <button class="btn haupt" id="senden">Kurs einreichen</button>
       </div><div class="meldung" id="sendeMeldung"></div>`;
     $("#flipInnen").appendChild(K.render(Object.assign({}, d, { klasse })));
     fertig.classList.add("an");
     $("#zurueck").onclick = () => fertig.classList.remove("an");
     $("#senden").onclick = senden;
-  });
+  }
 
   async function senden() {
     const btn = $("#senden"); btn.disabled = true; btn.textContent = "Wird geschickt …";
@@ -645,7 +706,7 @@
           <p style="color:var(--text2);margin:0;font-size:17px;line-height:1.45">Danke für deine Idee. Wer weiß, vielleicht wird daraus einmal ein echter Kurs.</p>
           <div class="knoepfe"><button class="btn" id="nochmal">Noch einen Kurs bauen</button><button class="btn" id="schliessen">Zurück zur Karte</button></div>`;
         $("#schliessen").onclick = () => fertig.classList.remove("an");
-        $("#nochmal").onclick = () => { fertig.classList.remove("an"); d = leer(); speichern(); titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; video.value = ""; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; videoInfo(); bildStatus(); lookZeichnen(); aenderung(); document.querySelector('#reiter [data-s="idee"]').click(); };
+        $("#nochmal").onclick = () => { fertig.classList.remove("an"); d = leer(); speichern(); titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; video.value = ""; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; videoInfo(); bildStatus(); lookZeichnen(); aenderung(); zeigeSchritt(1); };
       }, 900);
     } catch (err) {
       btn.disabled = false; btn.textContent = "Nochmal versuchen";
@@ -672,7 +733,7 @@
   document.querySelectorAll("[data-ic]").forEach(el => { el.insertAdjacentHTML("afterbegin", WK_ICON(el.dataset.ic)); });
 
   // ---------- Start ----------
-  lookZeichnen(); bausteineZeichnen(); stickerZeichnen(); ideenMischen(); bildStatus(); zeichnen();
+  lookZeichnen(); bausteineZeichnen(); stickerZeichnen(); ideenMischen(); bildStatus(); zeichnen(); zeigeSchritt(1);
 })();
 </script>
 </body>
