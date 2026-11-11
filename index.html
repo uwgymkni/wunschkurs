@@ -78,7 +78,7 @@
 
   /* Spielautomat */
   .automat { background: linear-gradient(180deg, #2a1f5c, #1a1440); border-radius: 18px; padding: 14px; border: 1px solid rgba(255,255,255,.12); box-shadow: inset 0 2px 0 rgba(255,255,255,.08); }
-  .walzen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .walzen { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
   .walze { height: 56px; overflow: hidden; border-radius: 10px; background: #0b0920; position: relative; box-shadow: inset 0 8px 10px -6px rgba(0,0,0,.8), inset 0 -8px 10px -6px rgba(0,0,0,.8); }
   .walze ul { list-style: none; margin: 0; padding: 0; will-change: transform; }
   .walze li { height: 56px; display: grid; place-items: center; text-align: center; font-weight: 700; font-size: 15px; line-height: 1.1; padding: 0 4px; }
@@ -88,6 +88,14 @@
   .hebel { background: linear-gradient(180deg, #ffd23f, #ff7a1a) !important; color: #1a1033 !important; }
   .funke { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.05); font-size: 14px; color: var(--text2); line-height: 1.4; }
   .funke b { color: var(--text); }
+  .ideen { display: flex; flex-wrap: wrap; gap: 8px; }
+  .idee { display: inline-flex; align-items: center; gap: 7px; padding: 9px 13px; border-radius: 12px; background: rgba(255,255,255,.06); border: 1px solid var(--linie); font-size: 14px; font-weight: 600; line-height: 1.25; animation: rein .35s ease both; }
+  .idee .ic { width: 17px; height: 17px; color: #ffd23f; flex: none; }
+  .laufband { overflow: hidden; margin: 0 -24px 30px; -webkit-mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+  .laufband-innen { display: flex; gap: 12px; width: max-content; animation: band 60s linear infinite; }
+  .laufband-innen span { white-space: nowrap; padding: 9px 16px; border-radius: 99px; border: 1px solid rgba(255,255,255,.18); font-weight: 700; font-size: 16px; color: #e9e6ff; display: inline-flex; gap: 8px; align-items: center; }
+  .laufband-innen span .ic { color: var(--akz); width: 18px; height: 18px; }
+  @keyframes band { to { transform: translateX(-50%); } }
 
   /* Auswahl-Kacheln */
   .kacheln { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }
@@ -190,7 +198,11 @@
           <div class="zaehler"><span id="titelZ">0</span>/60</div>
           <input class="feld" id="untertitel" maxlength="70" placeholder="Untertitel (optional)" autocomplete="off" style="margin-top:8px">
 
-          <div class="gruppe-titel">Keine Idee? Dreh den Ideen-Automaten</div>
+          <div class="gruppe-titel">So ausgefallen darf es sein</div>
+          <div class="ideen" id="ideen"></div>
+          <button class="btn klein" id="mehrIdeen" style="margin-top:10px">Andere Ideen zeigen</button>
+
+          <div class="gruppe-titel">Oder lass den Ideen-Automaten mischen</div>
           <div class="automat">
             <div class="walzen">
               <div><div class="walze" id="w0"><ul></ul></div><div class="walze-label">Thema</div></div>
@@ -268,7 +280,8 @@
 <div class="overlay an" id="intro">
   <div class="intro">
     <h1 class="gross">Was würdest du machen, wenn dir <span>alles</span> frei stünde?</h1>
-    <p>Bau deinen absoluten Wunschkurs. Titel, Look, Bausteine, Sticker. Am Ende landet deine Karte auf der großen Wand.</p>
+    <p>Kurse in der Oberstufe dürfen überraschen: Kitesurfen, ein Musicalbesuch, eine Reise ins Ausland oder ein Semester lang Fotografie und Videoschnitt. Was wäre deiner?</p>
+    <div class="laufband" aria-hidden="true"><div class="laufband-innen" id="laufband"></div></div>
     <input class="feld klasse-wahl" id="klasseInput" maxlength="10" placeholder="Deine Klasse, z. B. 4A" style="display:none">
     <button class="btn haupt" id="losBtn">Los geht's</button>
   </div>
@@ -341,7 +354,7 @@
   const WALZEN = [
     ["Drohnen", "Games", "Japan", "Mode", "das Gehirn", "das Weltall", "Fußball", "Krimis", "Musikvideos", "eigenes Geld", "das Klima", "Tiere", "Roboter", "Street Art", "Erste Hilfe", "Social Media", "Mythen", "Autos", "Pflanzen", "Escape Rooms", "Streetfood", "Tanz", "Fake News", "Vulkane", "Sneaker", "Schach", "Comics", "Pferde", "Mountainbikes", "Formel 1", "Fotografie", "Kosmetik", "Hip-Hop", "Musicals", "Survival", "E-Sport", "Medizin", "Architektur", "Psychologie", "ein Start-up", "Kletterwände", "Raketen", "Schmuck", "Hunde"],
     ["bauen", "programmieren", "kochen", "filmen", "erforschen", "gestalten", "trainieren", "verstehen", "erfinden", "retten", "designen", "testen", "organisieren", "schreiben", "verkaufen", "zeichnen", "aufnehmen", "auseinandernehmen", "erklären", "fotografieren", "präsentieren", "trainieren lassen", "verbessern"],
-    ["im Wald", "im Labor", "auf der Bühne", "in der Stadt", "online", "in der Werkstatt", "am Wasser", "in Wien", "bei einer Firma", "in der Küche", "auf dem Berg", "im Studio", "in der Nacht", "auf Reisen", "im Garten", "an der Uni", "im Museum", "in Brüssel"],
+    ["im Wald", "im Labor", "auf der Bühne", "in der Stadt", "online", "in der Werkstatt", "am Wasser", "in Wien", "bei einer Firma", "in der Küche", "auf dem Berg", "im Studio", "in der Nacht", "auf Reisen", "im Garten", "an der Uni", "im Museum", "in Brüssel", "in London", "am Meer", "am Gletscher", "im Musical", "in der Sternwarte", "in einem Tonstudio"],
   ];
   const ZEILE = 56; let wahl = [0, 0, 0], dreht = false;
   WALZEN.forEach((liste, i) => {
@@ -373,6 +386,33 @@
     titel.value = d.titel; unter.value = d.untertitel; $("#titelZ").textContent = d.titel.length;
     aenderung();
   });
+  const IDEEN = [
+    ["sailboat", "Kitesurfen lernen (gibt es an einer Schule in Graz)"], ["drama", "Ins Musical nach Wien, mit Blick hinter die Bühne"],
+    ["plane", "Eine Woche Sprachreise nach London oder Malta"], ["camera", "Fotografie mit echter Profi-Kamera"],
+    ["palette", "Grafikdesign: Logos, Plakate, eigene Marke"], ["clapperboard", "Videoschnitt wie bei YouTube-Profis"],
+    ["rocket", "Raketen bauen und auf der Wiese starten"], ["telescope", "Eine Nacht in der Sternwarte"],
+    ["mountain", "Gletscherforschung am Dachstein"], ["globe", "Brüssel: die EU live erleben"],
+    ["mic-vocal", "Einen eigenen Song im Tonstudio aufnehmen"], ["gamepad-2", "Ein eigenes Videospiel entwickeln"],
+    ["flask-conical", "Ein Tag im Uni-Labor in Leoben"], ["cpu", "3D-Druck: vom Entwurf zum fertigen Teil"],
+    ["trees", "Survival-Tage im Wald"], ["leaf", "Bienen halten im Schulgarten"],
+    ["dumbbell", "Ausbildung zur Fitness-Trainerin oder zum Trainer"], ["heart", "Erste Hilfe und Rettungsschwimmen"],
+    ["piggy-bank", "Eigenes Geld: Steuern, Konto, Investieren"], ["brain", "Psychologie: Warum wir tun, was wir tun"],
+    ["puzzle", "Einen Escape Room für die ganze Schule bauen"], ["headphones", "Ein Podcast-Studio aufbauen"],
+    ["chef-hat", "Kochen wie in Japan, Mexiko oder Indien"], ["bike", "Mountainbike-Technik und Touren"],
+    ["users", "UNO-Planspiel: Diplomatin oder Diplomat für drei Tage"], ["shirt", "Mode designen und selbst nähen"],
+  ];
+  function ideenMischen() {
+    const pool = IDEEN.slice().sort(() => Math.random() - .5).slice(0, 6);
+    $("#ideen").innerHTML = pool.map(([ic, t]) => `<span class="idee">${WK_ICON(ic)}${K.esc(t)}</span>`).join("");
+  }
+  $("#mehrIdeen").addEventListener("click", ideenMischen);
+  (function laufband() {
+    const teile = ["Kitesurfen", "Musical in Wien", "Grafikdesign", "Videoschnitt", "London", "Fotografie", "Raketen bauen", "Sternwarte", "Tonstudio", "Gletscher", "3D-Druck", "Escape Room", "Survival", "Brüssel", "Psychologie", "Game Design"];
+    const ics = ["sailboat", "drama", "palette", "clapperboard", "plane", "camera", "rocket", "telescope", "mic-vocal", "mountain", "cpu", "puzzle", "trees", "globe", "brain", "gamepad-2"];
+    const html = teile.map((t, i) => `<span>${WK_ICON(ics[i])}${t}</span>`).join("");
+    $("#laufband").innerHTML = html + html;
+  })();
+
   const FUNKEN = [
     "Was machst du in deiner Freizeit, ohne auf die Uhr zu schauen?",
     "Was wolltest du immer schon können?",
@@ -591,14 +631,14 @@
       return kurzMeldung("Dein Kurs braucht noch einen Titel.");
     }
     if (K.kartePruefen(d)) {
-      return kurzMeldung("Da steht etwas, das so nicht auf die Wand passt. Formulier es bitte um.");
+      return kurzMeldung("Da steht etwas, das so nicht passt. Formulier es bitte um.");
     }
     stkAktiv = -1; zeichnen();
     box.innerHTML = `<div class="karten-flip"><div class="innen" id="flipInnen"></div></div>
       <h2>So sieht dein Kurs aus!</h2>
       <div class="knoepfe">
         <button class="btn" id="zurueck">Weiter bearbeiten</button>
-        <button class="btn haupt" id="senden">Auf die Wand schicken</button>
+        <button class="btn haupt" id="senden">Kurs einreichen</button>
       </div><div class="meldung" id="sendeMeldung"></div>`;
     $("#flipInnen").appendChild(K.render(Object.assign({}, d, { klasse })));
     fertig.classList.add("an");
@@ -614,8 +654,8 @@
       $("#flipInnen").classList.add("weg");
       konfetti();
       setTimeout(() => {
-        box.innerHTML = `<div class="erfolg-ic">${WK_ICON("party-popper")}</div><h2>Deine Karte ist unterwegs zur Wand!</h2>
-          <p style="color:var(--text2);margin:0;font-size:17px;line-height:1.45">Sobald sie freigegeben ist, erscheint sie am Beamer.</p>
+        box.innerHTML = `<div class="erfolg-ic">${WK_ICON("party-popper")}</div><h2>Dein Kurs ist eingereicht!</h2>
+          <p style="color:var(--text2);margin:0;font-size:17px;line-height:1.45">Danke für deine Idee. Wer weiß, vielleicht wird daraus einmal ein echter Kurs.</p>
           <div class="knoepfe"><button class="btn" id="nochmal">Noch einen Kurs bauen</button><button class="btn" id="schliessen">Zurück zur Karte</button></div>`;
         $("#schliessen").onclick = () => fertig.classList.remove("an");
         $("#nochmal").onclick = () => { fertig.classList.remove("an"); d = leer(); speichern(); titel.value = ""; unter.value = ""; satz.value = ""; video.value = ""; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; videoInfo(); bildStatus(); lookZeichnen(); aenderung(); document.querySelector('#reiter [data-s="idee"]').click(); };
@@ -645,7 +685,7 @@
   document.querySelectorAll("[data-ic]").forEach(el => { el.insertAdjacentHTML("afterbegin", WK_ICON(el.dataset.ic)); });
 
   // ---------- Start ----------
-  lookZeichnen(); bausteineZeichnen(); stickerZeichnen(); bildStatus(); zeichnen();
+  lookZeichnen(); bausteineZeichnen(); stickerZeichnen(); ideenMischen(); bildStatus(); zeichnen();
 })();
 </script>
 </body>
