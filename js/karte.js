@@ -81,7 +81,7 @@
     return SPERR_WORT.some(w => woerter.includes(w));
   }
   function kartePruefen(d) {
-    const texte = [d.titel, d.untertitel, d.satz].concat((d.bausteine || []).filter(b => b && b.eigen).map(b => b.eigen));
+    const texte = [d.titel, d.untertitel, d.inhalt, d.satz].concat((d.bausteine || []).filter(b => b && b.eigen).map(b => b.eigen));
     return texte.some(pruefen);
   }
 

@@ -88,6 +88,13 @@
   .hebel { background: linear-gradient(180deg, #ffd23f, #ff7a1a) !important; color: #1a1033 !important; }
   .funke { margin-top: 14px; padding: 12px 14px; border-radius: 12px; background: rgba(255,255,255,.05); font-size: 14px; color: var(--text2); line-height: 1.4; }
   .funke b { color: var(--text); }
+  .frage-box { display: flex; align-items: center; gap: 10px; padding: 14px 16px; margin-bottom: 14px; border-radius: 14px; background: linear-gradient(135deg, rgba(255,61,127,.16), rgba(124,92,255,.16)); border: 1px solid rgba(255,255,255,.12); }
+  .frage { flex: 1; font-size: 17px; font-weight: 700; line-height: 1.3; }
+  .anstoss { margin-top: 22px; border-top: 1px solid var(--linie); padding-top: 14px; }
+  .anstoss summary { cursor: pointer; font-weight: 700; color: var(--text2); list-style: none; }
+  .anstoss summary::before { content: "+ "; color: var(--akz); }
+  .anstoss[open] summary::before { content: "− "; }
+  #untertitel { margin-top: 8px; }
   .ideen { display: flex; flex-wrap: wrap; gap: 8px; }
   .idee { display: inline-flex; align-items: center; gap: 7px; padding: 9px 13px; border-radius: 12px; background: rgba(255,255,255,.06); border: 1px solid var(--linie); font-size: 14px; font-weight: 600; line-height: 1.25; animation: rein .35s ease both; }
   .idee .ic { width: 17px; height: 17px; color: #ffd23f; flex: none; }
@@ -187,34 +194,40 @@
         <button data-s="look"><i data-ic="palette"></i>Look</button>
         <button data-s="bausteine"><i data-ic="blocks"></i>Bausteine</button>
         <button data-s="sticker"><i data-ic="sticker"></i>Sticker</button>
-        <button data-s="medien"><i data-ic="image"></i>Bild</button>
         <button data-s="satz"><i data-ic="message-square-quote"></i>Satz</button>
       </nav>
       <div class="seiten">
         <section class="seite an" data-s="idee">
-          <h3>Was würdest du machen?</h3>
-          <p class="hilfe">Stell dir vor, dir steht alles frei. Welcher Kurs wäre dein absoluter Favorit?</p>
-          <input class="feld" id="titel" maxlength="60" placeholder="Kurstitel, z. B. „Drohnen bauen“" autocomplete="off">
-          <div class="zaehler"><span id="titelZ">0</span>/60</div>
-          <input class="feld" id="untertitel" maxlength="70" placeholder="Untertitel (optional)" autocomplete="off" style="margin-top:8px">
-
-          <div class="gruppe-titel">So ausgefallen darf es sein</div>
-          <div class="ideen" id="ideen"></div>
-          <button class="btn klein" id="mehrIdeen" style="margin-top:10px">Andere Ideen zeigen</button>
-
-          <div class="gruppe-titel">Oder lass den Ideen-Automaten mischen</div>
-          <div class="automat">
-            <div class="walzen">
-              <div><div class="walze" id="w0"><ul></ul></div><div class="walze-label">Thema</div></div>
-              <div><div class="walze" id="w1"><ul></ul></div><div class="walze-label">Tun</div></div>
-              <div><div class="walze" id="w2"><ul></ul></div><div class="walze-label">Wo</div></div>
-            </div>
-            <div class="automat-knoepfe">
-              <button class="btn hebel" id="drehen"><span data-ic="dices"></span> Drehen</button>
-              <button class="btn" id="uebernehmen">Übernehmen</button>
-            </div>
+          <h3>Deine Kursidee</h3>
+          <p class="hilfe">Es gibt keine falsche Idee. Wir suchen echte Vorschläge von euch für die Oberstufe. Vielleicht wird deiner einmal wirklich angeboten.</p>
+          <div class="frage-box">
+            <div class="frage" id="funke"></div>
+            <button class="btn klein" id="andereFrage">Andere Frage</button>
           </div>
-          <div class="funke" id="funke"></div>
+          <input class="feld" id="titel" maxlength="60" placeholder="Wie heißt dein Kurs?" autocomplete="off">
+          <div class="zaehler"><span id="titelZ">0</span>/60</div>
+          <input class="feld" id="untertitel" maxlength="70" placeholder="Untertitel (optional)" autocomplete="off">
+          <div class="gruppe-titel">Was würde man in deinem Kurs machen oder lernen?</div>
+          <textarea class="feld" id="inhalt" maxlength="240" placeholder="Beschreib es in ein paar Sätzen, so wie du es einer Freundin oder einem Freund erklären würdest."></textarea>
+          <div class="zaehler"><span id="inhaltZ">0</span>/240</div>
+
+          <details class="anstoss">
+            <summary>Kein Plan? Hol dir einen kleinen Anstoß</summary>
+            <p class="hilfe" style="margin-top:10px">Der Automat würfelt zufällige Kombinationen. Nimm sie als Funken, nicht als Vorlage.</p>
+            <div class="automat">
+              <div class="walzen">
+                <div><div class="walze" id="w0"><ul></ul></div><div class="walze-label">Thema</div></div>
+                <div><div class="walze" id="w1"><ul></ul></div><div class="walze-label">Tun</div></div>
+                <div><div class="walze" id="w2"><ul></ul></div><div class="walze-label">Wo</div></div>
+              </div>
+              <div class="automat-knoepfe">
+                <button class="btn hebel" id="drehen"><span data-ic="dices"></span> Drehen</button>
+              </div>
+            </div>
+            <div class="gruppe-titel">Wie weit darf man gehen? Ein Beispiel</div>
+            <div class="ideen" id="ideen"></div>
+            <button class="btn klein" id="mehrIdeen" style="margin-top:10px">Noch ein Beispiel</button>
+          </details>
         </section>
 
         <section class="seite" data-s="look">
@@ -228,6 +241,9 @@
           <div class="farben" id="farben"></div>
           <div class="gruppe-titel">Passt zu welchem Bereich? (optional)</div>
           <div class="pillen" id="welten"></div>
+          <div class="gruppe-titel">Passendes YouTube-Video (optional)</div>
+          <input class="feld" id="video" placeholder="Link einfügen" autocomplete="off" inputmode="url">
+          <div class="zaehler" id="videoInfo"></div>
         </section>
 
         <section class="seite" data-s="bausteine">
@@ -247,22 +263,6 @@
           <div class="sticker-raster" id="stickerListe"></div>
         </section>
 
-        <section class="seite" data-s="medien">
-          <h3>Bild &amp; Video</h3>
-          <p class="hilfe">Ein eigenes Bild als Hintergrund, und wenn du willst, ein YouTube-Video, das zu deinem Kurs passt.</p>
-          <label class="upload" id="uploadLabel">
-            <span data-ic="image" class="gross-ic"></span>
-            <b>Bild auswählen</b>
-            <span>Foto, Screenshot oder Zeichnung</span>
-            <input type="file" accept="image/*" id="bildInput" hidden>
-          </label>
-          <div class="hinweis">Bitte keine Fotos, auf denen Personen zu erkennen sind.</div>
-          <button class="btn klein" id="bildWeg" style="margin-top:10px;display:none">Bild entfernen</button>
-          <div class="gruppe-titel">YouTube-Video (optional)</div>
-          <input class="feld" id="video" placeholder="Link einfügen" autocomplete="off" inputmode="url">
-          <div class="zaehler" id="videoInfo"></div>
-        </section>
-
         <section class="seite" data-s="satz">
           <h3>Der wichtigste Satz</h3>
           <p class="hilfe">Warum sollte jemand genau diesen Kurs wählen? Ein Satz, der neugierig macht. Genau diesen Satz haben auch eure Lehrerinnen und Lehrer für ihre Kursideen geschrieben.</p>
@@ -280,7 +280,7 @@
 <div class="overlay an" id="intro">
   <div class="intro">
     <h1 class="gross">Was würdest du machen, wenn dir <span>alles</span> frei stünde?</h1>
-    <p>Kurse in der Oberstufe dürfen überraschen: Kitesurfen, ein Musicalbesuch, eine Reise ins Ausland oder ein Semester lang Fotografie und Videoschnitt. Was wäre deiner?</p>
+    <p>Wir suchen echte Kursideen von euch. Es gibt keine falsche Idee, nur deine. Was würdest du gern ein Semester lang machen?</p>
     <div class="laufband" aria-hidden="true"><div class="laufband-innen" id="laufband"></div></div>
     <input class="feld klasse-wahl" id="klasseInput" maxlength="10" placeholder="Deine Klasse, z. B. 4A" style="display:none">
     <button class="btn haupt" id="losBtn">Los geht's</button>
@@ -310,9 +310,10 @@
   if (!klasse) $("#klasseInput").style.display = "block";
 
   // ---------- Zustand ----------
-  const leer = () => ({ titel: "", untertitel: "", satz: "", theme: "neon", bg: "aurora", farbe: K.FARBEN[0], welt: null, bausteine: [], sticker: [], bild: null, video: "" });
+  const leer = () => ({ titel: "", untertitel: "", inhalt: "", satz: "", theme: "neon", bg: "aurora", farbe: K.FARBEN[0], welt: null, bausteine: [], sticker: [], bild: null, video: "" });
   let d = leer();
   try { const s = JSON.parse(localStorage.getItem(SPEICHER) || "null"); if (s) d = Object.assign(leer(), s); } catch (e) {}
+  d.bild = null;
   let stkAktiv = -1;
 
   function speichern() {
@@ -379,13 +380,6 @@
     });
   }
   $("#drehen").addEventListener("click", drehen);
-  $("#uebernehmen").addEventListener("click", () => {
-    const thema = WALZEN[0][wahl[0]], tun = WALZEN[1][wahl[1]], wo = WALZEN[2][wahl[2]];
-    const t = thema.charAt(0).toUpperCase() + thema.slice(1) + " " + tun;
-    d.titel = t.slice(0, 60); d.untertitel = wo.charAt(0).toUpperCase() + wo.slice(1);
-    titel.value = d.titel; unter.value = d.untertitel; $("#titelZ").textContent = d.titel.length;
-    aenderung();
-  });
   const IDEEN = [
     ["sailboat", "Kitesurfen lernen (gibt es an einer Schule in Graz)"], ["drama", "Ins Musical nach Wien, mit Blick hinter die Bühne"],
     ["plane", "Eine Woche Sprachreise nach London oder Malta"], ["camera", "Fotografie mit echter Profi-Kamera"],
@@ -401,8 +395,9 @@
     ["chef-hat", "Kochen wie in Japan, Mexiko oder Indien"], ["bike", "Mountainbike-Technik und Touren"],
     ["users", "UNO-Planspiel: Diplomatin oder Diplomat für drei Tage"], ["shirt", "Mode designen und selbst nähen"],
   ];
+  const IDEEN_GEMISCHT = null; let ideeI = Math.floor(Math.random() * 26);
   function ideenMischen() {
-    const pool = IDEEN.slice().sort(() => Math.random() - .5).slice(0, 6);
+    const pool = [IDEEN[ideeI++ % IDEEN.length]];
     $("#ideen").innerHTML = pool.map(([ic, t]) => `<span class="idee">${WK_ICON(ic)}${K.esc(t)}</span>`).join("");
   }
   $("#mehrIdeen").addEventListener("click", ideenMischen);
@@ -414,6 +409,12 @@
   })();
 
   const FUNKEN = [
+    "Was machst du gern, wenn dir niemand etwas vorschreibt?",
+    "Was würdest du gern können, das man in der Schule nie lernt?",
+    "Bei welchem Thema vergisst du die Zeit?",
+    "Was würdest du gern einmal mit eigenen Händen machen?",
+    "Welche Frage über die Welt lässt dich nicht los?",
+    "Was könntest du anderen beibringen?",
     "Was machst du in deiner Freizeit, ohne auf die Uhr zu schauen?",
     "Was wolltest du immer schon können?",
     "Worüber könntest du stundenlang reden?",
@@ -423,8 +424,8 @@
     "Was würdest du gern einmal selbst bauen, kochen oder erfinden?",
   ];
   let fI = Math.floor(Math.random() * FUNKEN.length);
-  function funke() { $("#funke").innerHTML = "<b>Denk mal kurz nach:</b> " + K.esc(FUNKEN[fI]); fI = (fI + 1) % FUNKEN.length; }
-  funke(); setInterval(funke, 9000);
+  function funke() { $("#funke").textContent = FUNKEN[fI]; fI = (fI + 1) % FUNKEN.length; }
+  funke(); $("#andereFrage").addEventListener("click", funke);
 
   // ---------- Look ----------
   function kachelVorschau(extra) {
@@ -568,29 +569,15 @@
   window.addEventListener("resize", werkzeugPosition);
 
   // ---------- Bild & Video ----------
-  function bildStatus() { $("#bildWeg").style.display = d.bild ? "inline-block" : "none"; }
-  $("#bildInput").addEventListener("change", async e => {
-    const f = e.target.files && e.target.files[0]; if (!f) return;
-    try {
-      const url = URL.createObjectURL(f);
-      const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
-      const max = 900, sk = Math.min(1, max / Math.max(img.width, img.height));
-      const c = document.createElement("canvas"); c.width = Math.round(img.width * sk); c.height = Math.round(img.height * sk);
-      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-      let q = .75, data = c.toDataURL("image/jpeg", q);
-      while (data.length > 260000 && q > .35) { q -= .1; data = c.toDataURL("image/jpeg", q); }
-      URL.revokeObjectURL(url);
-      d.bild = data; aenderung(); bildStatus();
-    } catch (err) { kurzMeldung("Das Bild konnte nicht geladen werden."); }
-    e.target.value = "";
-  });
-  $("#bildWeg").addEventListener("click", () => { d.bild = null; aenderung(); bildStatus(); });
+  function bildStatus() {}
   const video = $("#video"); video.value = d.video || "";
   function videoInfo() { const id = K.youtubeId(video.value); $("#videoInfo").textContent = video.value ? (id ? "Video erkannt ✓" : "Das ist kein YouTube-Link.") : ""; }
   video.addEventListener("input", () => { d.video = K.youtubeId(video.value) ? video.value.trim() : ""; videoInfo(); aenderung(); });
   videoInfo();
 
   // ---------- Satz ----------
+  const inhalt = $("#inhalt"); inhalt.value = d.inhalt || ""; $("#inhaltZ").textContent = inhalt.value.length;
+  inhalt.addEventListener("input", () => { d.inhalt = inhalt.value; $("#inhaltZ").textContent = inhalt.value.length; speichern(); });
   const satz = $("#satz"); satz.value = d.satz; $("#satzZ").textContent = d.satz.length;
   satz.addEventListener("input", () => { d.satz = satz.value; $("#satzZ").textContent = satz.value.length; aenderung(); });
 
@@ -619,7 +606,7 @@
   $("#neuBtn").addEventListener("click", () => {
     if (!confirm("Wirklich von vorne beginnen? Deine Karte wird gelöscht.")) return;
     d = leer(); stkAktiv = -1; speichern();
-    titel.value = ""; unter.value = ""; satz.value = ""; video.value = ""; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; videoInfo(); bildStatus();
+    titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; video.value = ""; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; videoInfo(); bildStatus();
     lookZeichnen(); aenderung();
   });
 
@@ -658,7 +645,7 @@
           <p style="color:var(--text2);margin:0;font-size:17px;line-height:1.45">Danke für deine Idee. Wer weiß, vielleicht wird daraus einmal ein echter Kurs.</p>
           <div class="knoepfe"><button class="btn" id="nochmal">Noch einen Kurs bauen</button><button class="btn" id="schliessen">Zurück zur Karte</button></div>`;
         $("#schliessen").onclick = () => fertig.classList.remove("an");
-        $("#nochmal").onclick = () => { fertig.classList.remove("an"); d = leer(); speichern(); titel.value = ""; unter.value = ""; satz.value = ""; video.value = ""; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; videoInfo(); bildStatus(); lookZeichnen(); aenderung(); document.querySelector('#reiter [data-s="idee"]').click(); };
+        $("#nochmal").onclick = () => { fertig.classList.remove("an"); d = leer(); speichern(); titel.value = ""; unter.value = ""; satz.value = ""; inhalt.value = ""; $("#inhaltZ").textContent = "0"; video.value = ""; $("#titelZ").textContent = "0"; $("#satzZ").textContent = "0"; videoInfo(); bildStatus(); lookZeichnen(); aenderung(); document.querySelector('#reiter [data-s="idee"]').click(); };
       }, 900);
     } catch (err) {
       btn.disabled = false; btn.textContent = "Nochmal versuchen";

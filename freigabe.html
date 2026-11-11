@@ -36,6 +36,7 @@
   .eintrag .knoepfe { display: flex; gap: 6px; }
   .eintrag .knoepfe .btn { flex: 1; }
   .warnung { background: #ffe3e7; color: #b4142c; font-weight: 700; font-size: 13px; padding: 6px 10px; border-radius: 8px; }
+  .inhalt { font-size: 14px; line-height: 1.4; padding: 0 4px; color: #14132b; }
   .hinw { font-size: 13px; color: #6b6889; padding: 0 4px; }
   .hinw a { color: #14132b; font-weight: 700; }
   .leer { grid-column: 1/-1; text-align: center; color: #6b6889; padding: 60px; }
@@ -134,7 +135,7 @@
         const vid = K.youtubeId(kd.video);
         e.insertAdjacentHTML("beforeend", `<div class="meta"><span>${K.esc(r.klasse || "–")}</span><span>${zeit}</span></div>`
           + (K.kartePruefen(kd) ? `<div class="warnung">Wortfilter: bitte genau prüfen</div>` : "")
-          + (kd.bild ? `<div class="hinw">Enthält ein eigenes Bild</div>` : "")
+          + (kd.inhalt ? `<div class="inhalt">${K.esc(kd.inhalt)}</div>` : "")
           + (vid ? `<div class="hinw">Video: <a href="https://www.youtube.com/watch?v=${vid}" target="_blank" rel="noopener">vorher ansehen</a></div>` : ""));
         const kn = document.createElement("div"); kn.className = "knoepfe";
         if (r.status !== "frei") kn.insertAdjacentHTML("beforeend", `<button class="btn ok" data-a="frei">Freigeben</button>`);
@@ -166,8 +167,8 @@
     const z = v => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
     const bs = r => ((r.karte && r.karte.bausteine) || []).map(b => typeof b === "string" ? (K.B_INDEX[b] || {}).label : b && b.eigen).filter(Boolean).join(", ");
     const welt = r => { const w = K.WELTEN.find(x => x.id === (r.karte && r.karte.welt)); return w ? w.name : ""; };
-    const csv = ["Zeit;Klasse;Status;Titel;Untertitel;Bereich;Bausteine;Wichtigster Satz"].concat(rows.map(r =>
-      [z(new Date(r.erstellt).toLocaleString("de-AT")), z(r.klasse), z(r.status), z(r.titel), z(r.karte && r.karte.untertitel), z(welt(r)), z(bs(r)), z(r.satz)].join(";"))).join("\r\n");
+    const csv = ["Zeit;Klasse;Status;Titel;Untertitel;Was man macht;Bereich;Bausteine;Wichtigster Satz"].concat(rows.map(r =>
+      [z(new Date(r.erstellt).toLocaleString("de-AT")), z(r.klasse), z(r.status), z(r.titel), z(r.karte && r.karte.untertitel), z(r.karte && r.karte.inhalt), z(welt(r)), z(bs(r)), z(r.satz)].join(";"))).join("\r\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
     a.download = "wunschkurse" + (klasse ? "_" + klasse : "") + "_" + new Date().toISOString().slice(0, 10) + ".csv";
