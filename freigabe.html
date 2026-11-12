@@ -100,7 +100,7 @@
 
   async function token() {
     sitzung = await API.sitzung();
-    if (!sitzung) { location.reload(); throw new Error("abgemeldet"); }
+    if (!sitzung) { $("#loginSeite").hidden = false; $("#app").hidden = true; throw new Error("abgemeldet"); }
     return sitzung.token;
   }
 
@@ -191,7 +191,7 @@
     $("#links").innerHTML = `Galerie für den Beamer: <a href="${basis}galerie.html${k}" target="_blank">${basis}galerie.html${k}</a>`;
   }
 
-  setInterval(laden, 5000);
+  setInterval(() => { if (sitzung && !$("#app").hidden) laden(); }, 5000);
   start();
 })();
 </script>
