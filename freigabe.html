@@ -68,6 +68,7 @@
       <select id="klasseFilter"><option value="">Alle Klassen</option></select>
       <button class="btn klein ok" id="alleFrei">Alle neuen freigeben</button>
       <button class="btn klein" id="csv">CSV-Export</button>
+      <button class="btn klein nein" id="klasseWeg" hidden>Ganze Klasse löschen</button>
       <button class="btn klein" id="abmelden">Abmelden</button>
     </div>
   </div>
@@ -109,7 +110,15 @@
     sel.innerHTML = `<option value="">Alle Klassen</option>` + ks.map(k => `<option>${K.esc(k)}</option>`).join("");
     sel.value = ks.includes(alt) ? alt : "";
   }
-  $("#klasseFilter").onchange = e => { klasse = e.target.value; laden(); linksZeigen(); };
+  $("#klasseFilter").onchange = e => { klasse = e.target.value; $("#klasseWeg").hidden = !klasse; laden(); linksZeigen(); };
+  $("#klasseWeg").onclick = async () => {
+    if (!klasse) return;
+    const rows = await API.alle(await token(), null, klasse);
+    if (!rows.length) return;
+    if (!confirm(`Alle ${rows.length} Karten der Klasse ${klasse} endgültig löschen? Das lässt sich nicht rückgängig machen.`)) return;
+    await API.loeschen(await token(), rows.map(r => r.id));
+    klasse = ""; $("#klasseWeg").hidden = true; await klassenLaden(); $("#klasseFilter").value = ""; letzteSignatur = ""; laden(); linksZeigen();
+  };
   $("#tabs").onclick = e => { const b = e.target.closest("button"); if (!b) return; tab = b.dataset.st; document.querySelectorAll("#tabs button").forEach(x => x.classList.toggle("an", x === b)); laden(); };
 
   let letzteSignatur = "";
@@ -140,7 +149,7 @@
         const kn = document.createElement("div"); kn.className = "knoepfe";
         if (r.status !== "frei") kn.insertAdjacentHTML("beforeend", `<button class="btn ok" data-a="frei">Freigeben</button>`);
         if (r.status !== "abgelehnt") kn.insertAdjacentHTML("beforeend", `<button class="btn nein" data-a="abgelehnt">${r.status === "frei" ? "Von der Wand" : "Ablehnen"}</button>`);
-        if (r.status === "abgelehnt") kn.insertAdjacentHTML("beforeend", `<button class="btn nein" data-a="loeschen">Löschen</button>`);
+        kn.insertAdjacentHTML("beforeend", `<button class="btn nein" data-a="loeschen">Löschen</button>`);
         kn.onclick = async ev => {
           const b = ev.target.closest("button"); if (!b) return; b.disabled = true;
           try {
@@ -165,10 +174,11 @@
   $("#csv").onclick = async () => {
     const rows = await API.alle(await token(), null, klasse);
     const z = v => '"' + String(v == null ? "" : v).replace(/"/g, '""') + '"';
-    const bs = r => ((r.karte && r.karte.bausteine) || []).map(b => typeof b === "string" ? (K.B_INDEX[b] || {}).label : b && b.eigen).filter(Boolean).join(", ");
-    const welt = r => { const w = K.WELTEN.find(x => x.id === (r.karte && r.karte.welt)); return w ? w.name : ""; };
-    const csv = ["Zeit;Klasse;Status;Titel;Untertitel;Was man macht;Bereich;Bausteine;Wichtigster Satz"].concat(rows.map(r =>
-      [z(new Date(r.erstellt).toLocaleString("de-AT")), z(r.klasse), z(r.status), z(r.titel), z(r.karte && r.karte.untertitel), z(r.karte && r.karte.inhalt), z(welt(r)), z(bs(r)), z(r.satz)].join(";"))).join("\r\n");
+    const k = r => r.karte || {};
+    const csv = ["Zeit;Klasse;Status;Titel;Was man macht;Highlight;Hashtags;Wichtigster Satz;Stil;Hintergrund;Sticker;Wortfilter"].concat(rows.map(r =>
+      [z(new Date(r.erstellt).toLocaleString("de-AT")), z(r.klasse), z(r.status), z(r.titel), z(k(r).inhalt), z(k(r).highlight),
+       z((k(r).hashtags || []).filter(Boolean).map(t => "#" + t).join(" ")), z(r.satz), z(k(r).theme), z(k(r).bg),
+       z((k(r).sticker || []).length), z(K.kartePruefen(Object.assign({}, k(r), { titel: r.titel, satz: r.satz })) ? "prüfen" : "")].join(";"))).join("\r\n");
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
     a.download = "wunschkurse" + (klasse ? "_" + klasse : "") + "_" + new Date().toISOString().slice(0, 10) + ".csv";
