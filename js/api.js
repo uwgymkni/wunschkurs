@@ -18,11 +18,11 @@
 
   const api = {
     // Schüler:in reicht eine Karte ein (ohne Login)
-    async einreichen({ klasse, titel, satz, karte }) {
+    async einreichen({ klasse, titel, satz, karte, ipad }) {
       const res = await fetch(REST, {
         method: "POST",
         headers: headers(null, { Prefer: "return=minimal" }),
-        body: JSON.stringify({ klasse, titel, satz, karte }),
+        body: JSON.stringify(ipad ? { klasse, titel, satz, karte, ipad } : { klasse, titel, satz, karte }),
       });
       await check(res);
     },
@@ -95,6 +95,12 @@
         body: JSON.stringify({ status }),
       });
       await check(res);
+    },
+
+    async ipad(token, id) {
+      const res = await fetch(REST + "?select=ipad&id=eq." + encodeURIComponent(id), { headers: headers(token) });
+      await check(res);
+      const j = await res.json(); return (j[0] && j[0].ipad) || "";
     },
 
     async loeschen(token, ids) {

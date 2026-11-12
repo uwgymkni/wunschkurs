@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0b0920">
 <title>Dein Wunschkurs · BG/BRG Knittelfeld</title>
-<link rel="stylesheet" href="css/karte.css?v=4">
+<link rel="stylesheet" href="css/karte.css?v=5">
 <style>
   :root {
     --bg: #0b0920; --panel: #15122e; --panel2: #1e1a3f; --linie: rgba(255,255,255,.1);
@@ -340,10 +340,10 @@
 
 <canvas class="konfetti" id="konfetti"></canvas>
 
-<script src="js/config.js?v=4"></script>
-<script src="js/api.js?v=4"></script>
-<script src="js/icons.js?v=4"></script>
-<script src="js/karte.js?v=4"></script>
+<script src="js/config.js?v=5"></script>
+<script src="js/api.js?v=5"></script>
+<script src="js/icons.js?v=5"></script>
+<script src="js/karte.js?v=5"></script>
 <script>
 (function () {
   const K = window.WK_KARTE, API = window.WK_API;
@@ -353,7 +353,12 @@
   // ---------- Klasse aus dem QR-Code (?k=4a) ----------
   const params = new URLSearchParams(location.search);
   let klasse = (params.get("k") || "").trim().slice(0, 10).toUpperCase();
-  if (!klasse) { try { klasse = localStorage.getItem("wk_klasse") || ""; } catch (e) {} }
+  // iPad-Name aus der Intune-Verknüpfung (?ipad=…): merken und aus der Adresse entfernen
+  const ipadParam = (params.get("ipad") || "").trim().slice(0, 80);
+  if (ipadParam && !/^\{\{/.test(ipadParam)) { try { localStorage.setItem("wk_ipad", ipadParam); } catch (e) {} }
+  if (params.has("ipad")) { params.delete("ipad"); history.replaceState(null, "", location.pathname + (params.toString() ? "?" + params : "")); }
+  let ipad = ""; try { ipad = localStorage.getItem("wk_ipad") || ""; } catch (e) {}
+  if (!klasse && !ipadParam) { try { klasse = localStorage.getItem("wk_klasse") || ""; } catch (e) {} }
   if (!klasse) $("#klasseInput").style.display = "block";
 
   // ---------- Zustand ----------
@@ -714,7 +719,8 @@
       <div class="knoepfe">
         <button class="btn" id="zurueck">Zurück und ändern</button>
         <button class="btn haupt" id="senden">Kurs einreichen</button>
-      </div><div class="meldung" id="sendeMeldung"></div>`;
+      </div><div class="meldung" id="sendeMeldung"></div>
+      <p style="margin:6px 0 0;font-size:12px;color:var(--text2)">Deine Karte erscheint sofort an der Wand und ist diesem iPad zuordenbar.</p>`;
     $("#flipInnen").appendChild(K.render(Object.assign({}, d, { klasse })));
     fertig.classList.add("an");
     $("#zurueck").onclick = () => fertig.classList.remove("an");
@@ -728,7 +734,7 @@
     let geraet = null; try { geraet = localStorage.getItem("wk_geraet"); if (!geraet) { geraet = "G-" + zuf(6); localStorage.setItem("wk_geraet", geraet); } } catch (e) { geraet = "G-" + zuf(6); }
     karte.code = zuf(4); karte.geraet = geraet; karte.geraetInfo = (navigator.userAgent || "").slice(0, 160);
     try {
-      await API.einreichen({ klasse, titel: d.titel.trim().slice(0, 80), satz: (d.satz || "").trim().slice(0, 300), karte });
+      await API.einreichen({ klasse, titel: d.titel.trim().slice(0, 80), satz: (d.satz || "").trim().slice(0, 300), karte, ipad });
       $("#flipInnen").classList.add("weg");
       konfetti();
       setTimeout(() => {

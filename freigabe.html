@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <title>Wunschkurs · Freigabe</title>
-<link rel="stylesheet" href="css/karte.css?v=4">
+<link rel="stylesheet" href="css/karte.css?v=5">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; background: #f4f3f8; color: #14132b; font-family: Barlow, system-ui, sans-serif; }
@@ -77,10 +77,10 @@
   <div class="links" id="links"></div>
 </section>
 
-<script src="js/config.js?v=4"></script>
-<script src="js/api.js?v=4"></script>
-<script src="js/icons.js?v=4"></script>
-<script src="js/karte.js?v=4"></script>
+<script src="js/config.js?v=5"></script>
+<script src="js/api.js?v=5"></script>
+<script src="js/icons.js?v=5"></script>
+<script src="js/karte.js?v=5"></script>
 <script>
 (function () {
   const K = window.WK_KARTE, API = window.WK_API;
@@ -155,10 +155,12 @@
         const kn = document.createElement("div"); kn.className = "knoepfe";
         if (r.status !== "frei") kn.insertAdjacentHTML("beforeend", `<button class="btn ok" data-a="frei">${r.status === "abgelehnt" ? "Wieder zeigen" : "Geprüft"}</button>`);
         if (r.status !== "abgelehnt") kn.insertAdjacentHTML("beforeend", `<button class="btn nein" data-a="abgelehnt">Ausblenden</button>`);
-        kn.insertAdjacentHTML("beforeend", `<button class="btn nein" data-a="loeschen">Löschen</button>`);
+        kn.insertAdjacentHTML("beforeend", `<button class="btn nein" data-a="loeschen">Löschen</button><button class="btn" data-a="ipad" title="Nur im Notfall">iPad</button>`);
         kn.onclick = async ev => {
           const b = ev.target.closest("button"); if (!b) return; b.disabled = true;
           try {
+            if (b.dataset.a === "ipad") { if (!confirm("iPad-Namen dieser Karte anzeigen? Nur bei einem ernsten Vorfall.")) { b.disabled = false; return; }
+              const n = await API.ipad(await token(), r.id); b.textContent = n || "kein iPad-Name"; return; }
             if (b.dataset.a === "loeschen") { if (!confirm("Karte endgültig löschen?")) { b.disabled = false; return; } await API.loeschen(await token(), [r.id]); }
             else await API.status(await token(), [r.id], b.dataset.a);
             e.style.transition = "opacity .25s, transform .25s"; e.style.opacity = 0; e.style.transform = "scale(.95)";
