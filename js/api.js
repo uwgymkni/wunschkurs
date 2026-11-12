@@ -46,13 +46,13 @@
       await check(res);
       const j = await res.json();
       const s = { token: j.access_token, refresh: j.refresh_token, bis: Date.now() + (j.expires_in - 60) * 1000, email };
-      try { sessionStorage.setItem("wk_session", JSON.stringify(s)); } catch (e) {}
+      try { localStorage.setItem("wk_session", JSON.stringify(s)); } catch (e) {}
       return s;
     },
 
     async sitzung() {
       let s = null;
-      try { s = JSON.parse(sessionStorage.getItem("wk_session") || "null"); } catch (e) {}
+      try { s = JSON.parse(localStorage.getItem("wk_session") || "null"); } catch (e) {}
       if (!s) return null;
       if (Date.now() < s.bis) return s;
       try {
@@ -62,15 +62,15 @@
         await check(res);
         const j = await res.json();
         s = { token: j.access_token, refresh: j.refresh_token, bis: Date.now() + (j.expires_in - 60) * 1000, email: s.email };
-        sessionStorage.setItem("wk_session", JSON.stringify(s));
+        localStorage.setItem("wk_session", JSON.stringify(s));
         return s;
       } catch (e) {
-        sessionStorage.removeItem("wk_session");
+        localStorage.removeItem("wk_session");
         return null;
       }
     },
 
-    abmelden() { try { sessionStorage.removeItem("wk_session"); } catch (e) {} },
+    abmelden() { try { localStorage.removeItem("wk_session"); } catch (e) {} },
 
     async alle(token, status, klasse) {
       let q = "?select=id,erstellt,klasse,titel,satz,karte,status&order=erstellt.desc&limit=500";
