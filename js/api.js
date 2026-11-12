@@ -29,7 +29,7 @@
 
     // Galerie: freigegebene Karten (ohne Login)
     async freigegebene(klasse) {
-      let q = "?select=id,erstellt,klasse,titel,satz,karte&status=eq.frei&order=erstellt.asc&limit=200";
+      let q = "?select=id,erstellt,klasse,titel,satz,karte&status=in.(neu,frei)&order=erstellt.asc&limit=200";
       if (klasse) q += "&klasse=eq." + encodeURIComponent(klasse);
       const res = await fetch(REST + q, { headers: headers() });
       await check(res);

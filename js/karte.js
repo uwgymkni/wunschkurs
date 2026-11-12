@@ -158,7 +158,7 @@
         <ul class="wk-chips">${chips || ""}</ul>
         ${vid ? `<button class="wk-video" type="button" data-video="${vid}" style="background-image:url('https://img.youtube.com/vi/${vid}/hqdefault.jpg')"><span>${window.WK_ICON ? WK_ICON("play") : "▶"}</span></button>` : ""}
         ${d.satz ? `<blockquote class="wk-satz">${esc(d.satz)}</blockquote>` : (opts.platzhalter ? '<blockquote class="wk-satz leer">Der wichtigste Satz: Warum sollte man diesen Kurs wählen?</blockquote>' : "")}
-        <footer class="wk-fuss"><span>BG/BRG Knittelfeld</span>${d.klasse ? `<span>${esc(d.klasse.toUpperCase())}</span>` : ""}</footer>
+        <footer class="wk-fuss"><span>BG/BRG Knittelfeld</span>${d.klasse || d.code ? `<span>${d.klasse ? esc(d.klasse.toUpperCase()) : ""}${d.code ? " · #" + esc(d.code) : ""}</span>` : ""}</footer>
       </div>
       <div class="wk-sticker">${(d.sticker || []).map((s, i) =>
         `<span class="stk" data-i="${i}" style="left:${(s.x * 100).toFixed(2)}%;top:${(s.y * 100).toFixed(2)}%;--s:${s.s || 1};--r:${s.r || 0}deg">${stickerHTML(s)}</span>`).join("")}</div>

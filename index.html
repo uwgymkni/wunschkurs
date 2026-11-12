@@ -724,12 +724,15 @@
   async function senden() {
     const btn = $("#senden"); btn.disabled = true; btn.textContent = "Wird geschickt …";
     const karte = Object.assign({}, d); delete karte.titel; delete karte.satz;
+    const ABC = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789", zuf = n => Array.from(crypto.getRandomValues(new Uint8Array(n)), b => ABC[b % ABC.length]).join("");
+    let geraet = null; try { geraet = localStorage.getItem("wk_geraet"); if (!geraet) { geraet = "G-" + zuf(6); localStorage.setItem("wk_geraet", geraet); } } catch (e) { geraet = "G-" + zuf(6); }
+    karte.code = zuf(4); karte.geraet = geraet; karte.geraetInfo = (navigator.userAgent || "").slice(0, 160);
     try {
       await API.einreichen({ klasse, titel: d.titel.trim().slice(0, 80), satz: (d.satz || "").trim().slice(0, 300), karte });
       $("#flipInnen").classList.add("weg");
       konfetti();
       setTimeout(() => {
-        box.innerHTML = `<div class="erfolg-ic">${WK_ICON("party-popper")}</div><h2>Dein Kurs ist eingereicht!</h2>
+        box.innerHTML = `<div class="erfolg-ic">${WK_ICON("party-popper")}</div><h2>Dein Kurs ist an der Wand!</h2><p style="font:700 22px/1.2 inherit;letter-spacing:.08em;margin:0">#${karte.code}</p>
           <p style="color:var(--text2);margin:0;font-size:17px;line-height:1.45">Danke für deine Idee. Wer weiß, vielleicht wird daraus einmal ein echter Kurs.</p>
           <div class="knoepfe"><button class="btn" id="nochmal">Noch einen Kurs bauen</button><button class="btn" id="schliessen">Zurück zur Karte</button></div>`;
         $("#schliessen").onclick = () => fertig.classList.remove("an");
